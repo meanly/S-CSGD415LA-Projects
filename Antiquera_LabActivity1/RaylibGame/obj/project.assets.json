@@ -67,19 +67,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/student/.nuget/packages/": {}
+    "C:\\Users\\meanl\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/student/Documents/meanly.dev/RaylibGame/RaylibGame.csproj",
+      "projectUniqueName": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
       "projectName": "RaylibGame",
-      "projectPath": "/Users/student/Documents/meanly.dev/RaylibGame/RaylibGame.csproj",
-      "packagesPath": "/Users/student/.nuget/packages/",
-      "outputPath": "/Users/student/Documents/meanly.dev/RaylibGame/obj/",
+      "projectPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
+      "packagesPath": "C:\\Users\\meanl\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/student/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\meanl\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -130,7 +130,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "NXLWYO2jMyg=",
+  "dgSpecHash": "Dgvb+xUJSyo=",
   "success": true,
-  "projectFilePath": "/Users/student/Documents/meanly.dev/RaylibGame/RaylibGame.csproj",
+  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
   "expectedPackageFiles": [
-    "/Users/student/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512"
+    "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.1\\raylib-cs.7.0.1.nupkg.sha512"
   ],
   "logs": []
 }
