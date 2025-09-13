@@ -4,7 +4,10 @@ class Program
 {
     static void Main()
     {
-        Raylib.InitWindow(800, 600, "My First Raylib.NET Game");
+        int screenWidth = 1280;  // change width
+        int screenHeight = 720;  // change height
+
+        Raylib.InitWindow(screenWidth, screenHeight, "Jeremy's Game");
         Raylib.SetTargetFPS(60);
 
         Game game = new Game();
