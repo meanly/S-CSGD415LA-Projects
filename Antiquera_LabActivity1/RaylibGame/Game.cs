@@ -14,6 +14,7 @@ public class Game
 
     // winning condition
     List<Rectangle> goalBoxes;
+    // track which goal box has captured an enemy
     bool enemyCaptured, enemy1Captured, enemy2Captured;
 
     public Game()
@@ -29,13 +30,13 @@ public class Game
         enemy1Rect = new Rectangle(enemy1.Position.X, enemy1.Position.Y, 35, 35);
         enemy2Rect = new Rectangle(enemy2.Position.X, enemy2.Position.Y, 35, 35);
 
-        // multiple goal boxes
-    goalBoxes = new List<Rectangle>
-    {   
-        new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35),
-        new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35),
-        new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35)
-    };
+        // multiple random goal boxes
+        goalBoxes = new List<Rectangle>
+        {
+            new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35),
+            new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35),
+            new Rectangle(Raylib.GetRandomValue(0, 800), Raylib.GetRandomValue(0, 600), 35, 35)
+        };
     }
 
     public void Update()
@@ -52,11 +53,24 @@ public class Game
         enemy2Rect = new Rectangle(enemy2.Position.X, enemy2.Position.Y, 35, 35);
 
         // Check if enemies entered any goal box
-        foreach (var box in goalBoxes)
+        for (int i = 0; i < goalBoxes.Count; i++)
         {
-            if (Raylib.CheckCollisionRecs(enemyRect, box)) enemyCaptured = true;
-            if (Raylib.CheckCollisionRecs(enemy1Rect, box)) enemy1Captured = true;
-            if (Raylib.CheckCollisionRecs(enemy2Rect, box)) enemy2Captured = true;
+            var box = goalBoxes[i];
+            if (!enemyCaptured && Raylib.CheckCollisionRecs(enemyRect, box))
+            {
+                enemyCaptured = true;
+                enemy.Position = new Vector2(-100, -100); // remove enemy
+            }
+            if (!enemy1Captured && Raylib.CheckCollisionRecs(enemy1Rect, box))
+            {
+                enemy1Captured = true;
+                enemy1.Position = new Vector2(-100, -100);
+            }
+            if (!enemy2Captured && Raylib.CheckCollisionRecs(enemy2Rect, box))
+            {
+                enemy2Captured = true;
+                enemy2.Position = new Vector2(-100, -100);
+            }
         }
 
         // Player movement
@@ -67,10 +81,10 @@ public class Game
                       Raylib.CheckCollisionRecs(playerRect, enemy1Rect) ||
                       Raylib.CheckCollisionRecs(playerRect, enemy2Rect);
 
-        if (isColliding && !takeDamage && player.hp > 20)
+        if (isColliding && !takeDamage && player.hp > 40)
         {
             takeDamage = true;
-            player.hp -= 20;
+            player.hp -= 40;
 
             if (Raylib.CheckCollisionRecs(playerRect, enemyRect))
                 enemy.Position = new Vector2(1000, 1000);
@@ -90,10 +104,14 @@ public class Game
         Raylib.DrawText("Jeremy's Game", 10, 10, 30, Color.RayWhite);
         Raylib.DrawText("Health: " + player.hp, 10, 50, 20, Color.RayWhite);
 
-        // Draw goal boxes
-        foreach (var box in goalBoxes)
+        // Draw goal boxes, turn green if captured
+        for (int i = 0; i < goalBoxes.Count; i++)
         {
-            Raylib.DrawRectangleRec(box, Color.Yellow);
+            Color boxColor = Color.Yellow;
+            if ((i == 0 && enemyCaptured) || (i == 1 && enemy1Captured) || (i == 2 && enemy2Captured))
+                boxColor = Color.Green;
+
+            Raylib.DrawRectangleRec(goalBoxes[i], boxColor);
         }
 
         if (isColliding)
