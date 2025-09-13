@@ -67,35 +67,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\meanl\\.nuget\\packages\\": {}
+    "/Users/student/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< Updated upstream
-      "projectUniqueName": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
-      "projectName": "RaylibGame",
-      "projectPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
-      "packagesPath": "C:\\Users\\meanl\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\obj\\",
-=======
-<<<<<<< HEAD
       "projectUniqueName": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/RaylibGame.csproj",
       "projectName": "RaylibGame",
       "projectPath": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/RaylibGame.csproj",
       "packagesPath": "/Users/student/.nuget/packages/",
       "outputPath": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/obj/",
-=======
-      "projectUniqueName": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
-      "projectName": "RaylibGame",
-      "projectPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
-      "packagesPath": "C:\\Users\\meanl\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\obj\\",
->>>>>>> a7efb3874010573622536840d436140d0d536ea2
->>>>>>> Stashed changes
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\meanl\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/student/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -146,8 +130,16 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file /Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/obj/project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
+    }
+  ]
 }

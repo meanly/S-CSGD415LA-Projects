@@ -1,22 +1,20 @@
 {
   "version": 2,
-<<<<<<< Updated upstream
-  "dgSpecHash": "Dgvb+xUJSyo=",
-  "success": true,
-  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
-=======
-<<<<<<< HEAD
   "dgSpecHash": "LEdxEWO+30E=",
   "success": true,
   "projectFilePath": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/RaylibGame.csproj",
-=======
-  "dgSpecHash": "Dgvb+xUJSyo=",
-  "success": true,
-  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity1\\RaylibGame\\RaylibGame.csproj",
->>>>>>> a7efb3874010573622536840d436140d0d536ea2
->>>>>>> Stashed changes
   "expectedPackageFiles": [
-    "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.1\\raylib-cs.7.0.1.nupkg.sha512"
+    "/Users/student/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problem reading the cache file /Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/obj/project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
+      "projectPath": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/RaylibGame.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/student/Documents/meanly.dev/GitHub Repositories/S-CSGD415LA-Projects/Antiquera_LabActivity1/RaylibGame/RaylibGame.csproj",
+      "targetGraphs": []
+    }
+  ]
 }
