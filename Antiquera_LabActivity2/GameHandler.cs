@@ -34,7 +34,7 @@ public class GameHandler
     }
     public void newGame()
     {
-        money = 1000;
+        money = 100;
         fishes = new List<Fish>();
         coins = new List<Coin>();
         foodPellets = new List<FoodPellet>();
