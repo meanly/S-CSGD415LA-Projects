@@ -11,18 +11,18 @@ public class AudioHandler
         Raylib.InitAudioDevice();
 
         // Load background music
-        bgMusic = Raylib.LoadMusicStream("res/Flask77-BG.mp3");
+        bgMusic = Raylib.LoadMusicStream("audio/Flask77-BG.mp3");
         Raylib.PlayMusicStream(bgMusic);
 
         // Load sound effects
-        soundEffects["click"] = Raylib.LoadSound("res/click.wav");
-        soundEffects["buyFish"] = Raylib.LoadSound("res/buyFish.wav");
-        soundEffects["coin1"] = Raylib.LoadSound("res/coin1.wav");
-        soundEffects["coin2"] = Raylib.LoadSound("res/coin2.wav");
-        soundEffects["poop"] = Raylib.LoadSound("res/poop.wav");
-        soundEffects["drop"] = Raylib.LoadSound("res/drop.wav");
-        soundEffects["die"] = Raylib.LoadSound("res/fishDeath.wav");
-        soundEffects["eat"] = Raylib.LoadSound("res/fishEat.wav");
+        soundEffects["click"] = Raylib.LoadSound("audio/click.wav");
+        soundEffects["buyFish"] = Raylib.LoadSound("audio/buyFish.wav");
+        soundEffects["coin1"] = Raylib.LoadSound("audio/coin1.wav");
+        soundEffects["coin2"] = Raylib.LoadSound("audio/coin2.wav");
+        soundEffects["poop"] = Raylib.LoadSound("audio/poop.wav");
+        soundEffects["drop"] = Raylib.LoadSound("audio/drop.wav");
+        soundEffects["die"] = Raylib.LoadSound("audio/fishDeath.wav");
+        soundEffects["eat"] = Raylib.LoadSound("audio/fishEat.wav");
     }
 
     public void Update()

@@ -4,14 +4,14 @@ using System;
 class TextureHandler
 {
     Texture2D bg;
-    protected Texture2D normalFishSprite = Raylib.LoadTexture("res/bigbluefin.png");
-    protected Texture2D carnivorousFishSprite = Raylib.LoadTexture("res/Tai.png");
-    protected Texture2D janitorFishSprite = Raylib.LoadTexture("res/Aji.png");
-    protected Texture2D silverCoinSprite = Raylib.LoadTexture("res/coinSilver.png");
-    protected Texture2D goldCoinSprite = Raylib.LoadTexture("res/coinGold.png");
-    protected Texture2D fishPooSprite = Raylib.LoadTexture("res/FishPoo.png");
-    protected Texture2D smallPelletSprite = Raylib.LoadTexture("res/pelletsmall.png");
-    protected Texture2D bigPelletSprite = Raylib.LoadTexture("res/pelletBig.png");
+    protected Texture2D normalFishSprite = Raylib.LoadTexture("img/bigbluefin.png");
+    protected Texture2D carnivorousFishSprite = Raylib.LoadTexture("img/Tai.png");
+    protected Texture2D janitorFishSprite = Raylib.LoadTexture("img/Aji.png");
+    protected Texture2D silverCoinSprite = Raylib.LoadTexture("img/coinSilver.png");
+    protected Texture2D goldCoinSprite = Raylib.LoadTexture("img/coinGold.png");
+    protected Texture2D fishPooSprite = Raylib.LoadTexture("img/FishPoo.png");
+    protected Texture2D smallPelletSprite = Raylib.LoadTexture("img/pelletsmall.png");
+    protected Texture2D bigPelletSprite = Raylib.LoadTexture("img/pelletBig.png");
 
     List<Fish> fishes;
     List<Coin> coins;
@@ -22,7 +22,7 @@ class TextureHandler
         this.fishes = fishes;
         this.coins = coins;
         this.foodPellets = foodPellets;
-        bg = Raylib.LoadTexture("res/background.png");//background.png
+        bg = Raylib.LoadTexture("img/background.png");//background.png
         Raylib.DrawTexture(bg, 0, 0, Color.White);
 
     }

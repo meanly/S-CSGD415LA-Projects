@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Cp3gtaPmkV4=",
+  "dgSpecHash": "KlttUx4Bbs0=",
   "success": true,
-  "projectFilePath": "c:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity2\\Antiquera_LabActivity2.csproj",
+  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity2\\Antiquera_LabActivity2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.1\\raylib-cs.7.0.1.nupkg.sha512"
   ],
