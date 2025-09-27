@@ -22,7 +22,7 @@ public class AudioHandler
         soundEffects["poop"] = Raylib.LoadSound("audio/poop.wav");
         soundEffects["drop"] = Raylib.LoadSound("audio/drop.wav");
         soundEffects["die"] = Raylib.LoadSound("audio/fishDeath.wav");
-        soundEffects["eat"] = Raylib.LoadSound("audio/fishEat.wav");
+        soundEffects["eat"] = Raylib.LoadSound("audio/munch.wav");
     }
 
     public void Update()

@@ -13,8 +13,8 @@ class TextureHandler
     protected Texture2D janitorFishSprite = Raylib.LoadTexture("img/poro_girl.png");
     protected Texture2D silverCoinSprite = Raylib.LoadTexture("img/coinSilver.png");
     protected Texture2D goldCoinSprite = Raylib.LoadTexture("img/coinGold.png");
-    protected Texture2D fishPooSprite = Raylib.LoadTexture("img/FishPoo.png");
-    protected Texture2D smallPelletSprite = Raylib.LoadTexture("img/pelletsmall.png");
+    protected Texture2D fishPooSprite = Raylib.LoadTexture("img/poop.png");
+    protected Texture2D smallPelletSprite = Raylib.LoadTexture("img/poro_snax.png");
     protected Texture2D bigPelletSprite = Raylib.LoadTexture("img/pelletBig.png");
 
     List<Fish> fishes;

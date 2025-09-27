@@ -155,7 +155,7 @@ public class Fish
                 break;
             case FishState.Dead:
                 hp = 0;
-                color = Color.Green;
+                color = Color.Red;
                 direction = 1; // Flip
                 y -= 20 * Raylib.GetFrameTime(); // Float upward
                 if (!triggered)

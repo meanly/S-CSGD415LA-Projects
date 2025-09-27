@@ -6,6 +6,7 @@ class BasicFish : Fish
     public BasicFish(float startX, float startY, AudioHandler audioHandler) : base(startX, startY, null)
     {
         lifespan = Random.Shared.Next(80, 140);
+        this.scale = 0.8f;
     }
 
 
