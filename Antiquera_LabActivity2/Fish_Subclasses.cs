@@ -43,6 +43,55 @@ class JanitorFish : Fish
     // public override void Update(List<Coin> coins)
     // {
     //     base.Update(coins);
-    //     // TODO: Eat smaller fish â†’ students implement
+    //     // TODO: Eat smaller fish â†' students implement
     // }
+}
+
+// Poro Fish Classes
+class PoroGirl : Fish
+{
+    public PoroGirl(float startX, float startY, AudioHandler audioHandler, TextureHandler textureHandler) : base(startX, startY, audioHandler)
+    {
+        sprite = textureHandler.GetPoroGirlSprite();
+        lifespan = Random.Shared.Next(100, 160);
+        this.scale = 0.7f;
+        maxHp = 40;
+        hp = maxHp;
+    }
+}
+
+class PoroKing : Fish
+{
+    public PoroKing(float startX, float startY, AudioHandler audioHandler, TextureHandler textureHandler) : base(startX, startY, audioHandler)
+    {
+        sprite = textureHandler.GetPoroKingSprite();
+        lifespan = Random.Shared.Next(200, 300);
+        this.scale = 1.2f;
+        maxHp = 60;
+        hp = maxHp;
+    }
+}
+
+class PoroPirate : Fish
+{
+    public PoroPirate(float startX, float startY, AudioHandler audioHandler, TextureHandler textureHandler) : base(startX, startY, audioHandler)
+    {
+        sprite = textureHandler.GetPoroPirateSprite();
+        lifespan = Random.Shared.Next(80, 120);
+        this.scale = 0.9f;
+        maxHp = 50;
+        hp = maxHp;
+    }
+}
+
+class PoroNerd : Fish
+{
+    public PoroNerd(float startX, float startY, AudioHandler audioHandler, TextureHandler textureHandler) : base(startX, startY, audioHandler)
+    {
+        sprite = textureHandler.GetPoroNerdSprite();
+        lifespan = Random.Shared.Next(120, 180);
+        this.scale = 0.8f;
+        maxHp = 35;
+        hp = maxHp;
+    }
 }

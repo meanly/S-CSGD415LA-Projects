@@ -143,7 +143,7 @@ public class Fish
                 hp = 0;
                 color = Color.Red;
                 direction = 1; // Flip
-                y -= 20 * Raylib.GetFrameTime(); // Float upward
+                y += 150 * Raylib.GetFrameTime(); // Fall downward faster
                 if (!triggered)
                 {
                     if (audioHandler != null)
@@ -152,8 +152,9 @@ public class Fish
                     }
                     triggered = true;
                 }
-                if (y <= 30)
+                if (y >= Raylib.GetScreenHeight() - 100) // Remove when fish reaches bottom of screen
                 {
+                    Console.WriteLine($"Fish removed at y={y}, screen height={Raylib.GetScreenHeight()}");
                     isActive = false;
                 }
                 break;

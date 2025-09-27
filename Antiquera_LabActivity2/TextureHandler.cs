@@ -9,13 +9,18 @@ class TextureHandler
     float[] parallaxSpeeds = new float[16];
 
     protected Texture2D normalFishSprite = Raylib.LoadTexture("img/poro_regular.png");
-    protected Texture2D carnivorousFishSprite = Raylib.LoadTexture("img/poro_pirate.png");
-    protected Texture2D janitorFishSprite = Raylib.LoadTexture("img/poro_girl.png");
     protected Texture2D silverCoinSprite = Raylib.LoadTexture("img/coinSilver.png");
     protected Texture2D goldCoinSprite = Raylib.LoadTexture("img/coinGold.png");
     protected Texture2D fishPooSprite = Raylib.LoadTexture("img/poop.png");
     protected Texture2D smallPelletSprite = Raylib.LoadTexture("img/poro_snax.png");
     protected Texture2D bigPelletSprite = Raylib.LoadTexture("img/pelletBig.png");
+
+    // Poro Fish Sprites
+    protected Texture2D poroGirlSprite = Raylib.LoadTexture("img/poro_girl.png");
+    protected Texture2D poroKingSprite = Raylib.LoadTexture("img/poro_king.png");
+
+    protected Texture2D poroPirateSprite = Raylib.LoadTexture("img/poro_pirate.png");
+    protected Texture2D poroNerdSprite = Raylib.LoadTexture("img/poro_nerd.png");
 
     List<Fish> fishes;
     List<Coin> coins;
@@ -36,6 +41,7 @@ class TextureHandler
             parallaxSpeeds[i] = 0.2f + i * 0.1f;
         }
     }
+
 
     public void DrawAll(windowSize gameSize)
     {
@@ -73,10 +79,6 @@ class TextureHandler
         {
             if (fish is BasicFish)
                 fish.sprite = normalFishSprite;
-            else if (fish is CarnivoreFish)
-                fish.sprite = carnivorousFishSprite;
-            else
-                fish.sprite = janitorFishSprite;
             fish.Draw();
         }
         foreach (var coin in coins)
@@ -122,12 +124,22 @@ class TextureHandler
 
         // Unload other textures
         Raylib.UnloadTexture(normalFishSprite);
-        Raylib.UnloadTexture(carnivorousFishSprite);
-        Raylib.UnloadTexture(janitorFishSprite);
         Raylib.UnloadTexture(silverCoinSprite);
         Raylib.UnloadTexture(goldCoinSprite);
         Raylib.UnloadTexture(fishPooSprite);
         Raylib.UnloadTexture(smallPelletSprite);
         Raylib.UnloadTexture(bigPelletSprite);
+
+        // Unload Poro sprites
+        Raylib.UnloadTexture(poroGirlSprite);
+        Raylib.UnloadTexture(poroKingSprite);
+        Raylib.UnloadTexture(poroPirateSprite);
+        Raylib.UnloadTexture(poroNerdSprite);
     }
+
+    // Poro Fish Sprite Getters
+    public Texture2D GetPoroGirlSprite() => poroGirlSprite;
+    public Texture2D GetPoroKingSprite() => poroKingSprite;
+    public Texture2D GetPoroPirateSprite() => poroPirateSprite;
+    public Texture2D GetPoroNerdSprite() => poroNerdSprite;
 }

@@ -8,11 +8,13 @@ public class MainMenu
     private readonly string[] menuOptions = { "Start Game", "About", "Quit" };
     private readonly int fontSize = 40;
     private readonly int titleFontSize = 60;
+    private Texture2D backgroundTexture;
 
     public MainMenu(int width, int height)
     {
         gameSize = new windowSize { width = width, height = height };
         selectedOption = 0;
+        backgroundTexture = Raylib.LoadTexture("img/menu.jpg");
     }
 
     public void Update()
@@ -48,11 +50,15 @@ public class MainMenu
 
     public void Draw()
     {
-        // Draw background
-        Raylib.ClearBackground(new Color(30, 30, 60, 255)); // Dark blue background
+        // Draw background image
+        Raylib.ClearBackground(Color.Black);
+        Raylib.DrawTexture(backgroundTexture, 0, 0, Color.White);
+
+        // Draw black opacity overlay for better text readability
+        Raylib.DrawRectangle(0, 0, gameSize.width, gameSize.height, new Color(0, 0, 0, 128)); // 50% black opacity
 
         // Draw title
-        string title = "INSANIQUARIUM CLONE";
+        string title = "Pororium by meanly.dev";
         int titleWidth = Raylib.MeasureText(title, titleFontSize);
         Raylib.DrawText(title,
             (gameSize.width - titleWidth) / 2,
@@ -93,6 +99,11 @@ public class MainMenu
             20,
             Color.LightGray);
     }
+
+    public void Dispose()
+    {
+        Raylib.UnloadTexture(backgroundTexture);
+    }
 }
 
 // About screen class
@@ -130,22 +141,23 @@ public class AboutScreen
 
         // Draw game information
         string[] aboutText = {
-            "INSANIQUARIUM CLONE",
+            "Pororium by meanly.dev",
             "",
-            "A fish tank simulation game where you:",
-            "• Feed fish with food pellets",
-            "• Collect coins dropped by fish",
-            "• Buy new fish to expand your tank",
-            "• Keep your fish happy and healthy",
+            "Poros are from League of Legends!",
+            "A insaniquarium inspired game where you:",
+            " - Feed poros with poro snax",
+            " - Collect coins dropped by poros",
+            " - Buy new poros to expand the sky",
+            " - Keep your fish happy and healthy",
             "",
             "CONTROLS:",
-            "• Left Click: Collect coins",
-            "• Right Click: Drop food pellets",
-            "• B Key: Buy new fish (costs 20 coins)",
-            "• ESC: Return to main menu",
+            " - Left Click: Collect coins",
+            " - Right Click: Drop poro snax",
+            " - B Key: Buy new fish (costs 20 coins)",
+            " - ESC: Return to main menu",
             "",
-            "Keep your fish alive and earn coins!",
-            "Don't let all your fish die or run out of money!"
+            "Keep your poros alive and earn coins!",
+            "Don't let all your poros die or run out of money!"
         };
 
         int startY = 150;
@@ -192,6 +204,7 @@ public static class GameState
         MainMenu,
         Playing,
         GameOver,
+        Win,
         About
     }
 

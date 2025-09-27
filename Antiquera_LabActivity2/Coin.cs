@@ -37,7 +37,7 @@ public class SilverCoin : Coin
 }
 public class GoldCoin : Coin
 {
-    public GoldCoin(float startX, float startY, int value) : base(startX, startY, 10) { }
+    public GoldCoin(float startX, float startY, int value) : base(startX, startY, 20) { }
 }
 public class Poop : Coin
 {

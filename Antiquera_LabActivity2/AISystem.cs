@@ -15,13 +15,15 @@ public class AISystem
     private List<FoodPellet> pellets;
     private List<Coin> coins;
     private AudioHandler audioHandler;
+    private GameHandler gameHandler;
 
-    public AISystem(List<Fish> fishes, List<FoodPellet> pellets, List<Coin> coins, AudioHandler audioHandler)
+    public AISystem(List<Fish> fishes, List<FoodPellet> pellets, List<Coin> coins, AudioHandler audioHandler, GameHandler gameHandler)
     {
         this.fishes = fishes;
         this.pellets = pellets;
         this.coins = coins;
         this.audioHandler = audioHandler;
+        this.gameHandler = gameHandler;
     }
 
     public void Update()
@@ -38,7 +40,7 @@ public class AISystem
             if (fish.hpTimer <= 0)
             {
                 fish.hp -= 1;
-                fish.hpTimer = 1f;
+                fish.hpTimer = 0.5f; // Fish lose 1 HP every 0.5 seconds (faster decay)
             }
             if (fish.hp <= fish.maxHp * 0.9f && fish.hp > 0)
             {
@@ -102,6 +104,22 @@ public class AISystem
 
                 case BasicFish basic:
                     HandleBasicFish(basic);
+                    break;
+
+                case PoroGirl poroGirl:
+                    HandlePoroGirl(poroGirl);
+                    break;
+
+                case PoroKing poroKing:
+                    HandlePoroKing(poroKing);
+                    break;
+
+                case PoroPirate poroPirate:
+                    HandlePoroPirate(poroPirate, deltaTime);
+                    break;
+
+                case PoroNerd poroNerd:
+                    HandlePoroNerd(poroNerd);
                     break;
             }
             fish.Update(coins, pellets, fish.GetType().Name);
@@ -222,9 +240,8 @@ public class AISystem
 
     private void HandleFishEatingPriority()
     {
-        // Get all hungry basic fish and sort by health (lowest first)
-        var hungryBasicFish = fishes
-            .OfType<BasicFish>()
+        // Get all hungry fish and sort by health (lowest first)
+        var hungryFish = fishes
             .Where(fish => fish.currentState == FishState.Hungry && !fish.isDead)
             .OrderBy(fish => fish.hp)
             .ToList();
@@ -236,17 +253,101 @@ public class AISystem
             if (!pellet.isActive) continue;
 
             // Find the hungriest fish that can eat this pellet
-            foreach (var fish in hungryBasicFish)
+            foreach (var fish in hungryFish)
             {
                 if (fish.IsCollidingWith(pellet))
                 {
-                    Console.WriteLine($"Basic fish (HP: {fish.hp:F1}) eating pellet");
+                    Console.WriteLine($"{fish.GetType().Name} (HP: {fish.hp:F1}) eating pellet");
                     audioHandler.PlaySound("eat");
                     fish.hp = Math.Clamp(fish.hp + 15, 0, fish.maxHp); // Restore 15 HP, cap at maxHp
+
+                    // Spawn heart particles at the fish's position
+                    gameHandler.SpawnHeartParticles(fish.x + fish.sprite.Width * fish.scale / 2, fish.y + fish.sprite.Height * fish.scale / 2);
+
                     pellet.isActive = false; // Remove pellet
                     break; // Only one fish can eat this pellet
                 }
             }
         }
+    }
+
+    // Poro Fish Handlers
+    private void HandlePoroGirl(PoroGirl poroGirl)
+    {
+        // Poro Girl cleans up poops
+        for (int i = coins.Count - 1; i >= 0; i--)
+        {
+            if (coins[i] is Poop poop && poroGirl.IsCollidingWith(poop))
+            {
+                Console.WriteLine("Poro Girl cleaned up poop!");
+                coins.RemoveAt(i);
+                break; // Only clean one poop per frame
+            }
+        }
+    }
+
+    private void HandlePoroKing(PoroKing poroKing)
+    {
+        // Poro King is the winning condition - no special behavior needed
+        // The game will check for PoroKing existence to determine win condition
+    }
+
+    private void HandlePoroPirate(PoroPirate poroPirate, float deltaTime)
+    {
+        // Poro Pirate hunts other fish (carnivore behavior)
+        Fish target = FindNearestPrey(poroPirate);
+        if (target != null && target != poroPirate)
+        {
+            poroPirate.MoveTowards(target.x, target.y);
+            if (poroPirate.IsCollidingWith(target))
+            {
+                Console.WriteLine("Poro Pirate ate another fish!");
+                poroPirate.hp = Math.Min(poroPirate.maxHp, poroPirate.hp + 30);
+
+                // Drop coins when killing regular poro
+                if (target is BasicFish)
+                {
+                    // Drop 2 gold coins and 1 silver coin
+                    coins.Add(new GoldCoin(target.x, target.y, 10));
+                    coins.Add(new GoldCoin(target.x + 20, target.y, 10));
+                    coins.Add(new SilverCoin(target.x + 10, target.y + 20, 5));
+                    Console.WriteLine("Regular poro dropped 2 gold coins and 1 silver coin!");
+                }
+
+                target.isActive = false; // Remove the eaten fish
+            }
+        }
+    }
+
+    private void HandlePoroNerd(PoroNerd poroNerd)
+    {
+        // Poro Nerd generates gold coins more frequently
+        if (poroNerd.coinTimer <= 0 && !poroNerd.isDead)
+        {
+            coins.Add(new GoldCoin(poroNerd.x, poroNerd.y, 15)); // Higher value coins
+            poroNerd.coinTimer = 3f; // More frequent than regular fish
+        }
+    }
+
+    private Fish FindNearestPrey(Fish hunter)
+    {
+        Fish closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var fish in fishes)
+        {
+            // Only target BasicFish (regular poros), not other Poro types
+            if (fish != hunter && !fish.isDead && fish is BasicFish)
+            {
+                float dist = Vector2.Distance(new Vector2(hunter.x, hunter.y), new Vector2(fish.x, fish.y));
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = fish;
+                }
+            }
+        }
+
+        return closest;
     }
 }

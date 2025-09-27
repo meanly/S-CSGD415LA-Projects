@@ -24,6 +24,9 @@ public class AudioHandler
         soundEffects["die"] = Raylib.LoadSound("audio/fishDeath.wav");
         soundEffects["eat"] = Raylib.LoadSound("audio/munch.wav");
         Raylib.SetSoundVolume(soundEffects["eat"], 0.3f); // Set munch sound to 30% volume
+        // Use existing sound for PoroKing reveal (can be replaced with dedicated sound later)
+        soundEffects["poroKingReveal"] = Raylib.LoadSound("audio/coin1.wav");
+        Raylib.SetSoundVolume(soundEffects["poroKingReveal"], 0.8f); // Set reveal sound to 80% volume
     }
 
     public void Update()
