@@ -1,6 +1,7 @@
 using Raylib_cs;
 using System;
 using System.Numerics;
+using System.Linq;
 public enum FishState
 {
     Idle,
@@ -13,12 +14,14 @@ public class AISystem
     private List<Fish> fishes;
     private List<FoodPellet> pellets;
     private List<Coin> coins;
+    private AudioHandler audioHandler;
 
-    public AISystem(List<Fish> fishes, List<FoodPellet> pellets, List<Coin> coins)
+    public AISystem(List<Fish> fishes, List<FoodPellet> pellets, List<Coin> coins, AudioHandler audioHandler)
     {
         this.fishes = fishes;
         this.pellets = pellets;
         this.coins = coins;
+        this.audioHandler = audioHandler;
     }
 
     public void Update()
@@ -37,7 +40,7 @@ public class AISystem
                 fish.hp -= 1;
                 fish.hpTimer = 1f;
             }
-            if (fish.hp <= 80 && fish.hp > 0)
+            if (fish.hp <= fish.maxHp * 0.9f && fish.hp > 0)
             {
                 fish.currentState = FishState.Hungry;
             }
@@ -103,25 +106,14 @@ public class AISystem
             }
             fish.Update(coins, pellets, fish.GetType().Name);
         }
+
+        // Handle fish eating with priority (lowest health fish eat first)
+        HandleFishEatingPriority();
     }
 
     private void HandleBasicFish(BasicFish fish)
     {
-        //fish.currentState = fish.hp <= fish.maxHp-(fish.maxHp/4) ? FishState.Hungry : FishState.Swim;
-
-        for (int i = pellets.Count - 1; i >= 0; i--)
-        {
-            FoodPellet pellet = pellets[i];
-            if (fish.IsCollidingWith(pellet) && fish.hp < 70)
-            {
-                Console.WriteLine("Basic fish eating pellet");
-                PlaySingle.PlaySound("FishEat");
-                fish.hp = Math.Clamp(fish.hp + 25, 0, 100); // Cap at 100
-                pellets.RemoveAt(i);
-                break; // Only eat one pellet per frame
-            }
-        }
-
+        // Individual fish eating logic is now handled in HandleFishEatingPriority
     }
 
     private void HandleCarnivore(CarnivoreFish fish, float deltaTime)
@@ -226,5 +218,35 @@ public class AISystem
         }
 
         return closest;
+    }
+
+    private void HandleFishEatingPriority()
+    {
+        // Get all hungry basic fish and sort by health (lowest first)
+        var hungryBasicFish = fishes
+            .OfType<BasicFish>()
+            .Where(fish => fish.currentState == FishState.Hungry && !fish.isDead)
+            .OrderBy(fish => fish.hp)
+            .ToList();
+
+        // For each pellet, find the hungriest fish that can eat it
+        for (int pelletIndex = pellets.Count - 1; pelletIndex >= 0; pelletIndex--)
+        {
+            FoodPellet pellet = pellets[pelletIndex];
+            if (!pellet.isActive) continue;
+
+            // Find the hungriest fish that can eat this pellet
+            foreach (var fish in hungryBasicFish)
+            {
+                if (fish.IsCollidingWith(pellet))
+                {
+                    Console.WriteLine($"Basic fish (HP: {fish.hp:F1}) eating pellet");
+                    audioHandler.PlaySound("eat");
+                    fish.hp = Math.Clamp(fish.hp + 15, 0, fish.maxHp); // Restore 15 HP, cap at maxHp
+                    pellet.isActive = false; // Remove pellet
+                    break; // Only one fish can eat this pellet
+                }
+            }
+        }
     }
 }

@@ -57,20 +57,6 @@ public class Fish
 
         Move(pellets);
 
-        // Check collision with food pellets
-        foreach (var pellet in pellets)
-        {
-            if (pellet.isActive && IsCollidingWith(pellet))
-            {
-                hp = Math.Min(maxHp, hp + pellet.nutrition); // Increase health, don't exceed maxHp
-                pellet.isActive = false; // Remove pellet
-                if (audioHandler != null)
-                {
-                    audioHandler.PlaySound("eat"); // Play eat sound effect
-                }
-            }
-        }
-
         // Clamp to screen
         // x = Math.Clamp(x, 0, Raylib.GetScreenWidth() - (sprite.Width * scale));
         y = Math.Clamp(y, 0, Raylib.GetScreenHeight() - (sprite.Height * scale));
@@ -160,7 +146,10 @@ public class Fish
                 y -= 20 * Raylib.GetFrameTime(); // Float upward
                 if (!triggered)
                 {
-                    PlaySingle.PlaySound("FishDeath");
+                    if (audioHandler != null)
+                    {
+                        audioHandler.PlaySound("die");
+                    }
                     triggered = true;
                 }
                 if (y <= 30)
@@ -249,6 +238,9 @@ public class Fish
     }
     public void playSound(string sound)
     {
-        PlaySingle.PlaySound("FishPoo");
+        if (audioHandler != null)
+        {
+            audioHandler.PlaySound(sound);
+        }
     }
 }

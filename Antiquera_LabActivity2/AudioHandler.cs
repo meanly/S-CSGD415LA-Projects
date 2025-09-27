@@ -23,6 +23,7 @@ public class AudioHandler
         soundEffects["drop"] = Raylib.LoadSound("audio/drop.wav");
         soundEffects["die"] = Raylib.LoadSound("audio/fishDeath.wav");
         soundEffects["eat"] = Raylib.LoadSound("audio/munch.wav");
+        Raylib.SetSoundVolume(soundEffects["eat"], 0.3f); // Set munch sound to 30% volume
     }
 
     public void Update()

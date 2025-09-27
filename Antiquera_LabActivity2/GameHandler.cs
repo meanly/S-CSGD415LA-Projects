@@ -30,7 +30,7 @@ public class GameHandler
         textureHandler = new TextureHandler(fishes, coins, foodPellets);
         audioHandler = new AudioHandler();
         audioHandler.LoadAudio();
-        aiSystem = new AISystem(fishes, foodPellets, coins);
+        aiSystem = new AISystem(fishes, foodPellets, coins, audioHandler);
         //shopHandler = new ShopHandler(gameSize);
 
         ///Add 1 Fish to start
@@ -39,18 +39,6 @@ public class GameHandler
 
     public void Update()
     {
-        //Check for Game Over conditions
-        if (money <= 0 || fishes.Count == 0)
-        {
-            // Game Over Logic
-            Raylib.DrawText("GAME OVER! Press R to Restart", gameSize.width / 4, 300, 40, Color.Red);
-            if (Raylib.IsKeyPressed(KeyboardKey.R))
-            {
-                audioHandler.UnloadAudio();
-                newGame();
-            }
-            return;
-        }
 
         //foreach (var fish in fishes) fish.Update(coins);
         foreach (var coin in coins) coin.Update();
