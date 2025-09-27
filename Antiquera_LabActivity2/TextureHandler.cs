@@ -3,10 +3,14 @@ using System;
 
 class TextureHandler
 {
-    Texture2D bg;
-    protected Texture2D normalFishSprite = Raylib.LoadTexture("img/bigbluefin.png");
-    protected Texture2D carnivorousFishSprite = Raylib.LoadTexture("img/Tai.png");
-    protected Texture2D janitorFishSprite = Raylib.LoadTexture("img/Aji.png");
+    // Parallax layers
+    Texture2D[] parallaxLayers = new Texture2D[16];
+    float[] parallaxOffsets = new float[16];
+    float[] parallaxSpeeds = new float[16];
+
+    protected Texture2D normalFishSprite = Raylib.LoadTexture("img/poro_regular.png");
+    protected Texture2D carnivorousFishSprite = Raylib.LoadTexture("img/poro_pirate.png");
+    protected Texture2D janitorFishSprite = Raylib.LoadTexture("img/poro_girl.png");
     protected Texture2D silverCoinSprite = Raylib.LoadTexture("img/coinSilver.png");
     protected Texture2D goldCoinSprite = Raylib.LoadTexture("img/coinGold.png");
     protected Texture2D fishPooSprite = Raylib.LoadTexture("img/FishPoo.png");
@@ -22,15 +26,49 @@ class TextureHandler
         this.fishes = fishes;
         this.coins = coins;
         this.foodPellets = foodPellets;
-        bg = Raylib.LoadTexture("img/background.png");//background.png
-        Raylib.DrawTexture(bg, 0, 0, Color.White);
 
+        // Load parallax layers and set speeds
+        for (int i = 0; i < 16; i++)
+        {
+            parallaxLayers[i] = Raylib.LoadTexture($"img/dynamic_bg/{i + 1}.png");
+            parallaxOffsets[i] = 0;
+            // Farther layers move slower, closer layers move faster
+            parallaxSpeeds[i] = 0.2f + i * 0.1f;
+        }
     }
+
     public void DrawAll(windowSize gameSize)
     {
+        float scaleX, scaleY;
+        for (int i = 0; i < parallaxLayers.Length; i++)
+        {
+            scaleX = (float)gameSize.width / parallaxLayers[i].Width;
+            scaleY = (float)gameSize.height / parallaxLayers[i].Height;
 
-        Raylib.DrawTexture(bg, 0, 0, Color.White);
+            parallaxOffsets[i] -= parallaxSpeeds[i];
+            if (parallaxOffsets[i] <= -parallaxLayers[i].Width * scaleX)
+                parallaxOffsets[i] += parallaxLayers[i].Width * scaleX;
+
+            // Draw first copy
+            Raylib.DrawTextureEx(
+                parallaxLayers[i],
+                new System.Numerics.Vector2(parallaxOffsets[i], 0),
+                0,
+                MathF.Max(scaleX, scaleY),
+                Color.White
+            );
+            // Draw second copy for seamless looping
+            Raylib.DrawTextureEx(
+                parallaxLayers[i],
+                new System.Numerics.Vector2(parallaxOffsets[i] + parallaxLayers[i].Width * scaleX, 0),
+                0,
+                MathF.Max(scaleX, scaleY),
+                Color.White
+            );
+        }
+
         Raylib.DrawRectangle(0, 0, gameSize.width, 50, Color.DarkBlue);//Shop
+
         foreach (var fish in fishes)
         {
             if (fish is BasicFish)
@@ -64,6 +102,7 @@ class TextureHandler
             foodPellet.Draw();
         }
     }
+
     public void draw(List<object> instances)
     {
         //Draw all of the sprites on the screen and on the correct coordinates
@@ -71,19 +110,24 @@ class TextureHandler
         {
             //instance.Draw();
         }
-        if (bg.Id == 0)
-            Console.WriteLine("Failed to load background.png");
     }
-    public void dispose(List<object> instances)
+
+    public void DisposeTextures()
     {
-        //Unload all of the textures
-        foreach (var instance in instances)
+        // Unload parallax layers
+        for (int i = 0; i < parallaxLayers.Length; i++)
         {
-            // Raylib.UnloadTexture(instance.sprite);
+            Raylib.UnloadTexture(parallaxLayers[i]);
         }
-    }
-    public void dispose()
-    {
-        Raylib.UnloadTexture(bg);
+
+        // Unload other textures
+        Raylib.UnloadTexture(normalFishSprite);
+        Raylib.UnloadTexture(carnivorousFishSprite);
+        Raylib.UnloadTexture(janitorFishSprite);
+        Raylib.UnloadTexture(silverCoinSprite);
+        Raylib.UnloadTexture(goldCoinSprite);
+        Raylib.UnloadTexture(fishPooSprite);
+        Raylib.UnloadTexture(smallPelletSprite);
+        Raylib.UnloadTexture(bigPelletSprite);
     }
 }

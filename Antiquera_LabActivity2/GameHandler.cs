@@ -34,7 +34,7 @@ public class GameHandler
         //shopHandler = new ShopHandler(gameSize);
 
         ///Add 1 Fish to start
-        fishes.Add(new CarnivoreFish(200, 200, audioHandler));
+        fishes.Add(new BasicFish(200, 200, audioHandler));
     }
 
     public void Update()
@@ -102,7 +102,7 @@ public class GameHandler
                 }
             }
         }
-        if (Raylib.IsKeyPressed(KeyboardKey.Kp1))
+        if (Raylib.IsKeyPressed(KeyboardKey.B))
         {
             if (money >= 20)
             {

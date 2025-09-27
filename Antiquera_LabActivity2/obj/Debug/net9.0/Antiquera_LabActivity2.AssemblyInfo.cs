@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Antiquera_LabActivity2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a599bb1a619f2c46d7efb24690bcacb1fa86130")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e7a95547dcc138552f86ec9e3969f0c9c64ee85")]
 [assembly: System.Reflection.AssemblyProductAttribute("Antiquera_LabActivity2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Antiquera_LabActivity2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

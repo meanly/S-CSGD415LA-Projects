@@ -48,7 +48,28 @@ public class Fish
 
     public virtual void Update(List<Coin> coins, List<FoodPellet> pellets, string type)
     {
+        //dead state
+        if (hp <= 0 && currentState != FishState.Dead)
+        {
+            isDead = true;
+            currentState = FishState.Dead;
+        }
+
         Move(pellets);
+
+        // Check collision with food pellets
+        foreach (var pellet in pellets)
+        {
+            if (pellet.isActive && IsCollidingWith(pellet))
+            {
+                hp = Math.Min(maxHp, hp + pellet.nutrition); // Increase health, don't exceed maxHp
+                pellet.isActive = false; // Remove pellet
+                if (audioHandler != null)
+                {
+                    audioHandler.PlaySound("eat"); // Play eat sound effect
+                }
+            }
+        }
 
         // Clamp to screen
         // x = Math.Clamp(x, 0, Raylib.GetScreenWidth() - (sprite.Width * scale));
@@ -56,7 +77,7 @@ public class Fish
 
         if (directionTimer <= 0)
         {
-            directionTimer = rand.Next(5, 11); // 5â€“10 seconds
+            directionTimer = rand.Next(5, 11); // 5–10 seconds
         }
     }
 
@@ -203,7 +224,9 @@ public class Fish
     {
         float flip = direction == 1 ? -sprite.Width : sprite.Width;
 
-        Rectangle sourceRec = new Rectangle(0, 0, flip, isDead ? -sprite.Height : sprite.Height);
+        float sourceWidth = direction == 1 ? sprite.Width : -sprite.Width;
+        float sourceHeight = isDead ? -sprite.Height : sprite.Height;
+        Rectangle sourceRec = new Rectangle(0, 0, sourceWidth, sourceHeight);
         Rectangle destRec = new Rectangle(x, y, sprite.Width * scale, sprite.Height * scale);
         Vector2 origin = new Vector2((sprite.Width * scale) / 2, (sprite.Height * scale) / 2);
         float rotation = 0f;

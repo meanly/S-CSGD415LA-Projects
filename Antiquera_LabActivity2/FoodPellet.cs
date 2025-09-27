@@ -15,7 +15,7 @@ public class FoodPellet
         x = startX;
         y = startY;
         nutrition = nutritionValue;
-        //sprite = Raylib.LoadTexture("res/pelletBig.png");
+        sprite = Raylib.LoadTexture("img/pelletBig.png");
     }
     public virtual void Update()
     {
