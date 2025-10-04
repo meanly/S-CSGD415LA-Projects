@@ -20,6 +20,7 @@ namespace Antiquera_LabActivity3
         private bool isDragging = false;
         private List<TilePattern> currentPatterns = null!;
         private List<bool> patternUsed = null!;
+        private Vector2 previewPosition;
 
         public BlockBlastGame()
         {
@@ -111,6 +112,20 @@ namespace Antiquera_LabActivity3
                 }
             }
 
+            // Update preview position while dragging
+            if (isDragging && selectedPatternIndex >= 0)
+            {
+                // Convert mouse position to board coordinates
+                int boardX = (int)((mousePos.X - BOARD_OFFSET_X) / TILE_SIZE);
+                int boardY = (int)((mousePos.Y - BOARD_OFFSET_Y) / TILE_SIZE);
+
+                // Clamp to valid board positions
+                boardX = Math.Max(0, Math.Min(boardX, TileBoard.BOARD_SIZE - 1));
+                boardY = Math.Max(0, Math.Min(boardY, TileBoard.BOARD_SIZE - 1));
+
+                previewPosition = new Vector2(boardX, boardY);
+            }
+
             if (Raylib.IsMouseButtonReleased(MouseButton.Left) && isDragging)
             {
                 isDragging = false;
@@ -160,6 +175,7 @@ namespace Antiquera_LabActivity3
 
             DrawBoard();
             DrawPatterns();
+            DrawPreview();
             DrawUI();
 
             Raylib.EndDrawing();
@@ -229,6 +245,63 @@ namespace Antiquera_LabActivity3
                     Raylib.DrawText("USED", PATTERN_OFFSET_X + 60, patternY + 50, 20, Color.White);
                 }
             }
+        }
+
+        private void DrawPreview()
+        {
+            // Only draw preview if dragging and pattern is selected
+            if (isDragging && selectedPatternIndex >= 0 && !patternUsed[selectedPatternIndex])
+            {
+                var pattern = currentPatterns[selectedPatternIndex];
+                int previewX = (int)previewPosition.X;
+                int previewY = (int)previewPosition.Y;
+
+                // Check if the pattern can be placed at this position
+                bool canPlace = CanPlacePatternAt(pattern, previewX, previewY);
+
+                // Draw preview tiles
+                foreach (var pos in pattern.Positions)
+                {
+                    int x = previewX + (int)pos.X;
+                    int y = previewY + (int)pos.Y;
+
+                    // Only draw if within board bounds
+                    if (x >= 0 && x < TileBoard.BOARD_SIZE && y >= 0 && y < TileBoard.BOARD_SIZE)
+                    {
+                        int screenX = BOARD_OFFSET_X + x * TILE_SIZE;
+                        int screenY = BOARD_OFFSET_Y + y * TILE_SIZE;
+
+                        // Use different colors based on whether placement is valid
+                        Color previewColor = canPlace ? Color.White : Color.Red;
+                        Color borderColor = canPlace ? Color.Green : Color.Red;
+
+                        // Draw semi-transparent preview tile
+                        Raylib.DrawRectangle(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, previewColor);
+                        Raylib.DrawRectangleLines(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, borderColor);
+
+                        // Draw a small version of the pattern color in the center
+                        Color patternColor = GetTileColor(pattern.Color);
+                        int centerX = screenX + (TILE_SIZE - 20) / 2;
+                        int centerY = screenY + (TILE_SIZE - 20) / 2;
+                        Raylib.DrawRectangle(centerX, centerY, 20, 20, patternColor);
+                    }
+                }
+            }
+        }
+
+        private bool CanPlacePatternAt(TilePattern pattern, int boardX, int boardY)
+        {
+            foreach (var pos in pattern.Positions)
+            {
+                int x = boardX + (int)pos.X;
+                int y = boardY + (int)pos.Y;
+
+                if (!gameManager.TileBoard.IsValidPosition(x, y) || !gameManager.TileBoard.IsTileEmpty(x, y))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void DrawUI()
