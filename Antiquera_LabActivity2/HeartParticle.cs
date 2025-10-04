@@ -58,6 +58,8 @@ public class HeartParticle
 
         // Fade out as life decreases
         float alpha = (life / maxLife) * 255f;
+        // Clamp alpha to valid range (0-255) to prevent overflow
+        alpha = Math.Max(0f, Math.Min(255f, alpha));
         color = new Color(color.R, color.G, color.B, (int)alpha);
 
         // Deactivate when life runs out
