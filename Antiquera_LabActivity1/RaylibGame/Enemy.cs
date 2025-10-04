@@ -4,12 +4,12 @@ using System.Numerics;
 public class Enemy
 {
     public Vector2 Position;
-    public float Speed = 5f;
+    public float Speed = 3.7f;
     public int hp = 100;
     public float DetectionRange = 300f;
-    public float X { get; set;}
-    public float Y { get; set;}
- 
+    public float X { get; set; }
+    public float Y { get; set; }
+
 
     public Enemy(float _x, float _y)
     {
@@ -19,7 +19,7 @@ public class Enemy
 
 
     }
-   public void Update(Vector2 playerPosition)
+    public void Update(Vector2 playerPosition)
     {
         float distance = Raymath.Vector2Distance(Position, playerPosition);
         if (distance <= DetectionRange)
