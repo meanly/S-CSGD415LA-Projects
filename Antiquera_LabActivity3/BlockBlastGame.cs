@@ -6,7 +6,19 @@ namespace Antiquera_LabActivity3
     // Main game class
     public class BlockBlastGame
     {
-        private GameManager gameManager;
+        // Game components
+        private TileBoard tileBoard;
+        private TileChecker tileChecker;
+        private TilePurger tilePurger;
+        private ScoreManager scoreManager;
+        private TilePatternManager patternManager;
+        private SoundManager soundManager;
+        
+        // Game state
+        public bool IsGameOver { get; private set; }
+        public bool IsPaused { get; private set; }
+        
+        // Window constants
         private const int WINDOW_WIDTH = 1200;
         private const int WINDOW_HEIGHT = 800;
         private const int TILE_SIZE = 60;
@@ -15,7 +27,7 @@ namespace Antiquera_LabActivity3
         private const int PATTERN_OFFSET_X = 600;
         private const int PATTERN_OFFSET_Y = 50;
 
-        private Vector2 selectedPatternPos;
+        // Pattern management
         private int selectedPatternIndex = -1;
         private bool isDragging = false;
         private List<TilePattern> currentPatterns = null!;
@@ -24,13 +36,24 @@ namespace Antiquera_LabActivity3
 
         public BlockBlastGame()
         {
-            gameManager = new GameManager();
+            // Initialize game components
+            tileBoard = new TileBoard();
+            scoreManager = new ScoreManager();
+            tileChecker = new TileChecker(tileBoard);
+            tilePurger = new TilePurger(tileBoard, scoreManager);
+            patternManager = new TilePatternManager();
+            soundManager = new SoundManager();
+            
+            // Initialize game state
+            IsGameOver = false;
+            IsPaused = false;
+            
             InitializePatterns();
         }
 
         private void InitializePatterns()
         {
-            currentPatterns = gameManager.PatternManager.GetRandomPatterns(3);
+            currentPatterns = patternManager.GetRandomPatterns(3);
             patternUsed = new List<bool> { false, false, false };
         }
 
@@ -50,17 +73,20 @@ namespace Antiquera_LabActivity3
 
         private void Update()
         {
-            gameManager.Update();
+            if (!IsPaused && !IsGameOver)
+            {
+                scoreManager.Update();
+            }
             HandleInput();
         }
 
         private void HandleInput()
         {
-            if (gameManager.IsGameOver)
+            if (IsGameOver)
             {
                 if (Raylib.IsKeyPressed(KeyboardKey.R))
                 {
-                    gameManager.NewGame();
+                    NewGame();
                     InitializePatterns();
                 }
                 return;
@@ -68,17 +94,17 @@ namespace Antiquera_LabActivity3
 
             if (Raylib.IsKeyPressed(KeyboardKey.P))
             {
-                gameManager.Pause();
+                Pause();
             }
 
             if (Raylib.IsKeyPressed(KeyboardKey.S))
             {
-                gameManager.SaveGame();
+                SaveGame();
             }
 
             if (Raylib.IsKeyPressed(KeyboardKey.L))
             {
-                gameManager.LoadGame();
+                LoadGame();
             }
 
             HandleMouseInput();
@@ -141,7 +167,7 @@ namespace Antiquera_LabActivity3
                     {
                         if (selectedPatternIndex < currentPatterns.Count && !patternUsed[selectedPatternIndex])
                         {
-                            bool patternPlaced = gameManager.TryPlacePattern(currentPatterns[selectedPatternIndex], boardX, boardY);
+                            bool patternPlaced = TryPlacePattern(currentPatterns[selectedPatternIndex], boardX, boardY);
                             if (patternPlaced)
                             {
                                 // Mark this pattern as used
@@ -155,9 +181,9 @@ namespace Antiquera_LabActivity3
                                 }
 
                                 // Check if game is over (no valid placements for any unused pattern)
-                                if (gameManager.CheckGameOver(currentPatterns.Where((pattern, index) => !patternUsed[index]).ToList()))
+                                if (CheckGameOver(currentPatterns.Where((pattern, index) => !patternUsed[index]).ToList()))
                                 {
-                                    gameManager.EndGame();
+                                    EndGame();
                                 }
                             }
                         }
@@ -196,7 +222,7 @@ namespace Antiquera_LabActivity3
                     int posY = BOARD_OFFSET_Y + y * TILE_SIZE;
 
                     // Draw tile background (light gray for empty, colored for filled)
-                    Color tileColor = gameManager.TileBoard.IsTileEmpty(x, y) ? Color.LightGray : GetTileColor(gameManager.TileBoard.GetTileColor(x, y));
+                    Color tileColor = tileBoard.IsTileEmpty(x, y) ? Color.LightGray : GetTileColor(tileBoard.GetTileColor(x, y));
                     Raylib.DrawRectangle(posX, posY, TILE_SIZE - 1, TILE_SIZE - 1, tileColor);
 
                     // Draw grid lines
@@ -231,12 +257,19 @@ namespace Antiquera_LabActivity3
                 // Draw pattern tiles (only if not used)
                 if (!patternUsed[i])
                 {
-                    Color patternColor = GetTileColor(currentPatterns[i].Color);
-                    foreach (var pos in currentPatterns[i].Positions)
+                    var pattern = currentPatterns[i];
+                    for (int x = 0; x < pattern.Width; x++)
                     {
-                        int tileX = PATTERN_OFFSET_X + 20 + (int)pos.X * 30;
-                        int tileY = patternY + 20 + (int)pos.Y * 30;
-                        Raylib.DrawRectangle(tileX, tileY, 28, 28, patternColor);
+                        for (int y = 0; y < pattern.Height; y++)
+                        {
+                            if (pattern.TileSet[x, y] != TileColor.Black)
+                            {
+                                int tileX = PATTERN_OFFSET_X + 20 + x * 30;
+                                int tileY = patternY + 20 + y * 30;
+                                Color patternColor = GetTileColor(pattern.TileSet[x, y]);
+                                Raylib.DrawRectangle(tileX, tileY, 28, 28, patternColor);
+                            }
+                        }
                     }
                 }
                 else
@@ -259,31 +292,37 @@ namespace Antiquera_LabActivity3
                 // Check if the pattern can be placed at this position
                 bool canPlace = CanPlacePatternAt(pattern, previewX, previewY);
 
-                // Draw preview tiles
-                foreach (var pos in pattern.Positions)
+                // Draw preview tiles using tileSet[x][y] syntax
+                for (int x = 0; x < pattern.Width; x++)
                 {
-                    int x = previewX + (int)pos.X;
-                    int y = previewY + (int)pos.Y;
-
-                    // Only draw if within board bounds
-                    if (x >= 0 && x < TileBoard.BOARD_SIZE && y >= 0 && y < TileBoard.BOARD_SIZE)
+                    for (int y = 0; y < pattern.Height; y++)
                     {
-                        int screenX = BOARD_OFFSET_X + x * TILE_SIZE;
-                        int screenY = BOARD_OFFSET_Y + y * TILE_SIZE;
+                        if (pattern.TileSet[x, y] != TileColor.Black)
+                        {
+                            int boardX = previewX + x;
+                            int boardY = previewY + y;
 
-                        // Use different colors based on whether placement is valid
-                        Color previewColor = canPlace ? Color.White : Color.Red;
-                        Color borderColor = canPlace ? Color.Green : Color.Red;
+                            // Only draw if within board bounds
+                            if (boardX >= 0 && boardX < TileBoard.BOARD_SIZE && boardY >= 0 && boardY < TileBoard.BOARD_SIZE)
+                            {
+                                int screenX = BOARD_OFFSET_X + boardX * TILE_SIZE;
+                                int screenY = BOARD_OFFSET_Y + boardY * TILE_SIZE;
 
-                        // Draw semi-transparent preview tile
-                        Raylib.DrawRectangle(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, previewColor);
-                        Raylib.DrawRectangleLines(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, borderColor);
+                                // Use different colors based on whether placement is valid
+                                Color previewColor = canPlace ? Color.White : Color.Red;
+                                Color borderColor = canPlace ? Color.Green : Color.Red;
 
-                        // Draw a small version of the pattern color in the center
-                        Color patternColor = GetTileColor(pattern.Color);
-                        int centerX = screenX + (TILE_SIZE - 20) / 2;
-                        int centerY = screenY + (TILE_SIZE - 20) / 2;
-                        Raylib.DrawRectangle(centerX, centerY, 20, 20, patternColor);
+                                // Draw semi-transparent preview tile
+                                Raylib.DrawRectangle(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, previewColor);
+                                Raylib.DrawRectangleLines(screenX, screenY, TILE_SIZE - 1, TILE_SIZE - 1, borderColor);
+
+                                // Draw a small version of the pattern color in the center
+                                Color patternColor = GetTileColor(pattern.TileSet[x, y]);
+                                int centerX = screenX + (TILE_SIZE - 20) / 2;
+                                int centerY = screenY + (TILE_SIZE - 20) / 2;
+                                Raylib.DrawRectangle(centerX, centerY, 20, 20, patternColor);
+                            }
+                        }
                     }
                 }
             }
@@ -291,14 +330,20 @@ namespace Antiquera_LabActivity3
 
         private bool CanPlacePatternAt(TilePattern pattern, int boardX, int boardY)
         {
-            foreach (var pos in pattern.Positions)
+            for (int x = 0; x < pattern.Width; x++)
             {
-                int x = boardX + (int)pos.X;
-                int y = boardY + (int)pos.Y;
-
-                if (!gameManager.TileBoard.IsValidPosition(x, y) || !gameManager.TileBoard.IsTileEmpty(x, y))
+                for (int y = 0; y < pattern.Height; y++)
                 {
-                    return false;
+                    if (pattern.TileSet[x, y] != TileColor.Black)
+                    {
+                        int boardTileX = boardX + x;
+                        int boardTileY = boardY + y;
+
+                        if (!tileBoard.IsValidPosition(boardTileX, boardTileY) || !tileBoard.IsTileEmpty(boardTileX, boardTileY))
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
             return true;
@@ -307,8 +352,8 @@ namespace Antiquera_LabActivity3
         private void DrawUI()
         {
             // Draw score
-            Raylib.DrawText($"Score: {gameManager.ScoreManager.GetScore()}", 10, 10, 20, Color.Black);
-            Raylib.DrawText($"Combo: {gameManager.ScoreManager.Combo}", 10, 35, 20, Color.Black);
+            Raylib.DrawText($"Score: {scoreManager.GetScore()}", 10, 10, 20, Color.Black);
+            Raylib.DrawText($"Combo: {scoreManager.Combo}", 10, 35, 20, Color.Black);
 
             // Draw instructions
             Raylib.DrawText("Controls:", 10, WINDOW_HEIGHT - 120, 16, Color.Black);
@@ -317,12 +362,12 @@ namespace Antiquera_LabActivity3
             Raylib.DrawText("L - Load Game", 10, WINDOW_HEIGHT - 60, 14, Color.Black);
             Raylib.DrawText("Click and drag patterns to place", 10, WINDOW_HEIGHT - 40, 14, Color.Black);
 
-            if (gameManager.IsPaused)
+            if (IsPaused)
             {
                 Raylib.DrawText("PAUSED", WINDOW_WIDTH / 2 - 50, WINDOW_HEIGHT / 2, 30, Color.Red);
             }
 
-            if (gameManager.IsGameOver)
+            if (IsGameOver)
             {
                 Raylib.DrawText("GAME OVER", WINDOW_WIDTH / 2 - 80, WINDOW_HEIGHT / 2 - 30, 30, Color.Red);
                 Raylib.DrawText("Press R to restart", WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT / 2 + 10, 20, Color.Black);
@@ -344,6 +389,141 @@ namespace Antiquera_LabActivity3
                 TileColor.Pink => Color.Pink,
                 _ => Color.White
             };
+        }
+
+        // Game management methods
+        private void NewGame()
+        {
+            tileBoard = new TileBoard();
+            scoreManager = new ScoreManager();
+            tileChecker = new TileChecker(tileBoard);
+            tilePurger = new TilePurger(tileBoard, scoreManager);
+            IsGameOver = false;
+            IsPaused = false;
+        }
+
+        private void Pause()
+        {
+            IsPaused = !IsPaused;
+        }
+
+        private void SaveGame()
+        {
+            // Simple save implementation - save to a text file
+            try
+            {
+                using (var writer = new StreamWriter("savegame.dat"))
+                {
+                    // Save score
+                    writer.WriteLine(scoreManager.GetScore());
+                    writer.WriteLine(scoreManager.Combo);
+                    
+                    // Save board state
+                    for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
+                    {
+                        for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
+                        {
+                            writer.WriteLine(tileBoard.TileCheck(x, y));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving game: {ex.Message}");
+            }
+        }
+
+        private void LoadGame()
+        {
+            // Simple load implementation - load from a text file
+            try
+            {
+                if (File.Exists("savegame.dat"))
+                {
+                    using (var reader = new StreamReader("savegame.dat"))
+                    {
+                        // Load score
+                        int score = int.Parse(reader.ReadLine() ?? "0");
+                        int combo = int.Parse(reader.ReadLine() ?? "0");
+                        
+                        // Reset score manager and set values
+                        scoreManager = new ScoreManager();
+                        scoreManager.AddScore(score);
+                        scoreManager.SetCombo(combo);
+                        
+                        // Load board state
+                        for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
+                        {
+                            for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
+                            {
+                                int tileValue = int.Parse(reader.ReadLine() ?? "0");
+                                tileBoard.SetTile(x, y, tileValue);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading game: {ex.Message}");
+            }
+        }
+
+        private bool TryPlacePattern(TilePattern pattern, int boardX, int boardY)
+        {
+            // Check if pattern can be placed
+            if (!CanPlacePatternAt(pattern, boardX, boardY))
+                return false;
+
+            // Place the pattern
+            for (int x = 0; x < pattern.Width; x++)
+            {
+                for (int y = 0; y < pattern.Height; y++)
+                {
+                    if (pattern.TileSet[x, y] != TileColor.Black)
+                    {
+                        int tileX = boardX + x;
+                        int tileY = boardY + y;
+                        tileBoard.SetTile(tileX, tileY, (int)pattern.TileSet[x, y]);
+                    }
+                }
+            }
+
+            // Check for completed rows/columns and clear them
+            var completedTiles = tileChecker.CheckCompletedTiles();
+            if (completedTiles.Count > 0)
+            {
+                tilePurger.PurgeTiles(completedTiles);
+                soundManager.PlaySound("clear");
+            }
+
+            return true;
+        }
+
+        private bool CheckGameOver(List<TilePattern> availablePatterns)
+        {
+            // Check if any of the available patterns can be placed anywhere on the board
+            for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
+            {
+                for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
+                {
+                    foreach (var pattern in availablePatterns)
+                    {
+                        if (CanPlacePatternAt(pattern, x, y))
+                        {
+                            return false; // At least one pattern can be placed
+                        }
+                    }
+                }
+            }
+            return true; // No patterns can be placed
+        }
+
+        private void EndGame()
+        {
+            IsGameOver = true;
+            soundManager.PlaySound("gameover");
         }
     }
 }

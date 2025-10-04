@@ -29,20 +29,55 @@ namespace Antiquera_LabActivity3
         }
     }
 
-    // TilePattern class representing preset patterns
+    // TilePattern class representing preset patterns using tileSet[x][y] syntax
     public class TilePattern
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Vector2> Positions { get; set; }
-        public TileColor Color { get; set; }
+        public TileColor[,] TileSet { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public TilePattern(int id, string name, List<Vector2> positions, TileColor color)
+        public TilePattern(int id, string name, TileColor[,] tileSet)
         {
             Id = id;
             Name = name;
-            Positions = positions;
-            Color = color;
+            TileSet = tileSet;
+            Width = tileSet.GetLength(0);
+            Height = tileSet.GetLength(1);
+        }
+
+        // Helper method to get positions of non-empty tiles
+        public List<Vector2> GetPositions()
+        {
+            var positions = new List<Vector2>();
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (TileSet[x, y] != TileColor.Black)
+                    {
+                        positions.Add(new Vector2(x, y));
+                    }
+                }
+            }
+            return positions;
+        }
+
+        // Helper method to get the color of the pattern (first non-black tile)
+        public TileColor GetColor()
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (TileSet[x, y] != TileColor.Black)
+                    {
+                        return TileSet[x, y];
+                    }
+                }
+            }
+            return TileColor.Black;
         }
     }
 }

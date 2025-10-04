@@ -6,7 +6,7 @@ namespace Antiquera_LabActivity3
     public class SoundManager
     {
         private Dictionary<string, Sound> sounds;
-        private Music backgroundMusic;
+        // private Music backgroundMusic; // TODO: Implement when audio files are added
 
         public SoundManager()
         {

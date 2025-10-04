@@ -1,42 +1,45 @@
 using Raylib_cs;
 using System.Numerics;
+using System.Collections;
 
 namespace Antiquera_LabActivity3
 {
-    // TileBoard class managing the 8x8 grid
+    // TileBoard class managing the 8x8 grid using tileset 2D array
     public class TileBoard
     {
         public const int BOARD_SIZE = 8;
-        private Tile[,] tiles;
+        private int[,] tileset; // 2D array containing tile values
 
         public TileBoard()
         {
-            tiles = new Tile[BOARD_SIZE, BOARD_SIZE];
+            tileset = new int[BOARD_SIZE, BOARD_SIZE];
             InitializeBoard();
         }
 
         private void InitializeBoard()
         {
+            // At the start of the game, all tileset elements are set to 0 (blank tiles)
             for (int x = 0; x < BOARD_SIZE; x++)
             {
                 for (int y = 0; y < BOARD_SIZE; y++)
                 {
-                    tiles[x, y] = new Tile(TileColor.Black);
+                    tileset[x, y] = 0; // 0 = blank/empty tile
                 }
             }
         }
 
-        public Tile? GetTile(int x, int y)
+        public int TileCheck(int x, int y)
         {
+            // Returns the value of a tile in the TileBoard
             if (IsValidPosition(x, y))
-                return tiles[x, y];
-            return null;
+                return tileset[x, y];
+            return 0;
         }
 
-        public void SetTile(int x, int y, TileColor color)
+        public void SetTile(int x, int y, int value)
         {
             if (IsValidPosition(x, y))
-                tiles[x, y].Color = color;
+                tileset[x, y] = value;
         }
 
         public bool IsValidPosition(int x, int y)
@@ -46,20 +49,23 @@ namespace Antiquera_LabActivity3
 
         public bool IsTileEmpty(int x, int y)
         {
+            // Returns true if the tile in the tileset's value is zero, otherwise returns false
             if (!IsValidPosition(x, y)) return false;
-            return tiles[x, y].IsEmpty;
-        }
-
-        public TileColor GetTileColor(int x, int y)
-        {
-            if (!IsValidPosition(x, y)) return TileColor.Black;
-            return tiles[x, y].Color;
+            return tileset[x, y] == 0;
         }
 
         public void ClearTile(int x, int y)
         {
+            // Sets the tile values back to zero
             if (IsValidPosition(x, y))
-                tiles[x, y].Color = TileColor.Black;
+                tileset[x, y] = 0;
+        }
+
+        // Helper method to get tile color for rendering
+        public TileColor GetTileColor(int x, int y)
+        {
+            if (!IsValidPosition(x, y)) return TileColor.Black;
+            return (TileColor)tileset[x, y];
         }
     }
 
@@ -73,14 +79,15 @@ namespace Antiquera_LabActivity3
             tileBoard = board;
         }
 
-        public List<Vector2> CheckRows()
+        public int CheckRows(ArrayList completedTiles)
         {
-            var completedTiles = new List<Vector2>();
+            // Checks for a completed row, if there is, return the n number of completed rows, 
+            // then adds all the completed tile coordinates into an arraylist
+            int completedRowCount = 0;
 
             for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
             {
                 bool isRowComplete = true;
-                var rowTiles = new List<Vector2>();
 
                 for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
                 {
@@ -89,26 +96,31 @@ namespace Antiquera_LabActivity3
                         isRowComplete = false;
                         break;
                     }
-                    rowTiles.Add(new Vector2(x, y));
                 }
 
                 if (isRowComplete)
                 {
-                    completedTiles.AddRange(rowTiles);
+                    completedRowCount++;
+                    // Add all tiles in this row to the completedTiles arraylist
+                    for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
+                    {
+                        completedTiles.Add(new Vector2(x, y));
+                    }
                 }
             }
 
-            return completedTiles;
+            return completedRowCount;
         }
 
-        public List<Vector2> CheckColumns()
+        public int CheckColumns(ArrayList completedTiles)
         {
-            var completedTiles = new List<Vector2>();
+            // Checks for a completed column, if there is, return the n number of completed columns, 
+            // then adds all the completed tile coordinates into an arraylist
+            int completedColumnCount = 0;
 
             for (int x = 0; x < TileBoard.BOARD_SIZE; x++)
             {
                 bool isColumnComplete = true;
-                var columnTiles = new List<Vector2>();
 
                 for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
                 {
@@ -117,26 +129,28 @@ namespace Antiquera_LabActivity3
                         isColumnComplete = false;
                         break;
                     }
-                    columnTiles.Add(new Vector2(x, y));
                 }
 
                 if (isColumnComplete)
                 {
-                    completedTiles.AddRange(columnTiles);
+                    completedColumnCount++;
+                    // Add all tiles in this column to the completedTiles arraylist
+                    for (int y = 0; y < TileBoard.BOARD_SIZE; y++)
+                    {
+                        completedTiles.Add(new Vector2(x, y));
+                    }
                 }
             }
 
-            return completedTiles;
+            return completedColumnCount;
         }
 
-        public List<Vector2> CheckCompletedTiles()
+        public ArrayList CheckCompletedTiles()
         {
-            var completedTiles = new List<Vector2>();
-            completedTiles.AddRange(CheckRows());
-            completedTiles.AddRange(CheckColumns());
-
-            // Remove duplicates
-            return completedTiles.Distinct().ToList();
+            var completedTiles = new ArrayList();
+            CheckRows(completedTiles);
+            CheckColumns(completedTiles);
+            return completedTiles;
         }
     }
 
@@ -152,26 +166,29 @@ namespace Antiquera_LabActivity3
             this.scoreManager = scoreManager;
         }
 
-        public void PurgeTiles(List<Vector2> completedTiles)
+        public void PurgeTiles(ArrayList completedTiles)
         {
+            // Purges all the tiles with the coordinates in the completedTiles arraylist
             if (completedTiles.Count == 0) return;
 
-            // Clear the tiles
-            foreach (var tile in completedTiles)
+            // Clear the tiles (sets tile values back to zero)
+            foreach (Vector2 tile in completedTiles)
             {
                 tileBoard.ClearTile((int)tile.X, (int)tile.Y);
             }
 
-            // Calculate score
+            // Add a score based on the number of purged tiles
             int baseScore = completedTiles.Count * 10;
             scoreManager.AddScore(baseScore);
 
-            // Check for combo (more than 8 tiles cleared)
+            // If the arraylist count is greater than 8, divide the values by 8 and add that to the combo
             if (completedTiles.Count > 8)
             {
                 int comboMultiplier = completedTiles.Count / 8;
                 scoreManager.SetCombo(comboMultiplier);
             }
+
+            // TODO: May possibly show an animation and play a sound
         }
     }
 }
