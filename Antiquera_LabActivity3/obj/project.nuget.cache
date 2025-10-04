@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "0q/W3hwyFgA=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_LabActivity3\\Antiquera_LabActivity3.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.1\\raylib-cs.7.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
