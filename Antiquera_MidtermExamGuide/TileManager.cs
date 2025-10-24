@@ -16,7 +16,7 @@ namespace MemoryGame
         private float mismatchTimer = 0f;
         private int cols;
         private int rows;
-        
+
         public TileManager(int columns, int rows)
         {
             this.cols = columns;
@@ -29,29 +29,42 @@ namespace MemoryGame
             revealedThisTurn.Clear();
             mismatchTimer = 0f;
 
+            // Character names for the tiles
+            string[] characterNames = {
+                "Aren", "Cisco", "ENGage", "Euriepidies", "Jiyo", "Kuzuri",
+                "Marky", "Meanly", "Moon^2", "N1by", "Nyte", "Proksy", "Sia", "Zakkiyan"
+            };
+
             // prepare pairs
             int pairs = cols * rows / 2;
-            var ids = new List<int>();
+            var characterPairs = new List<string>();
             for (int i = 0; i < pairs; i++)
             {
-                ids.Add(i);
-                ids.Add(i);
+                characterPairs.Add(characterNames[i]);
+                characterPairs.Add(characterNames[i]);
             }
 
             // shuffle
-            ids = ids.OrderBy(x => rng.Next()).ToList();
+            characterPairs = characterPairs.OrderBy(x => rng.Next()).ToList();
 
-            // layout - make tiles square and center grid
-            float padding = 10;
-            float gridWAvail = screenW - 100;
-            float gridHAvail = screenH - 160;
-            float maxTileW = (gridWAvail - (cols + 1) * padding) / cols;
-            float maxTileH = (gridHAvail - (rows + 1) * padding) / rows;
+            // layout - create a proper grid with good spacing
+            float padding = 15; // Increased spacing between tiles
+            float margin = 50; // Margin from screen edges
+            float gridWAvail = screenW - 2 * margin;
+            float gridHAvail = screenH - 200; // Leave space for UI at top and bottom
+
+            // Calculate tile size to fit the grid nicely
+            float maxTileW = (gridWAvail - (cols - 1) * padding) / cols;
+            float maxTileH = (gridHAvail - (rows - 1) * padding) / rows;
             float tileSize = Math.Min(maxTileW, maxTileH);
-            float gridW = cols * tileSize + (cols + 1) * padding;
-            float gridH = rows * tileSize + (rows + 1) * padding;
-            float startX = (screenW - gridW) / 2 + padding;
-            float startY = 120 + ((screenH - 160 - gridH) / 2) + padding;
+
+            // Calculate grid dimensions
+            float gridW = cols * tileSize + (cols - 1) * padding;
+            float gridH = rows * tileSize + (rows - 1) * padding;
+
+            // Center the grid on screen
+            float startX = (screenW - gridW) / 2;
+            float startY = 120; // Start below the UI area
 
             int idx = 0;
             for (int r = 0; r < rows; r++)
@@ -59,12 +72,19 @@ namespace MemoryGame
                 for (int c = 0; c < cols; c++)
                 {
                     var t = new Tile();
-                    t.PairId = ids[idx++];
+                    t.PairId = idx; // Keep PairId for matching logic
+                    t.CharacterName = characterPairs[idx++];
                     t.State = TileState.Closed;
+
+                    // Calculate position with proper spacing
                     float x = startX + c * (tileSize + padding);
                     float y = startY + r * (tileSize + padding);
+
                     t.Rect = new Rectangle(x, y, tileSize, tileSize);
-                    t.X = x; t.Y = y; t.W = tileSize; t.H = tileSize;
+                    t.X = x;
+                    t.Y = y;
+                    t.W = tileSize;
+                    t.H = tileSize;
                     tiles.Add(t);
                 }
             }
@@ -140,10 +160,10 @@ namespace MemoryGame
                     break;
                 }
             }
-            
+
             int previousHoverIndex = lastHoverIndex;
             lastHoverIndex = hoverIndex;
-            return (hoverIndex != previousHoverIndex && hoverIndex >= 0 && 
+            return (hoverIndex != previousHoverIndex && hoverIndex >= 0 &&
                    tiles[hoverIndex].State == TileState.Closed && mismatchTimer <= 0f) ? hoverIndex : -1;
         }
 

@@ -96,8 +96,8 @@ namespace MemoryGame
 
         private void LoadTextures()
         {
-            try 
-            { 
+            try
+            {
                 tileNormalTex = Raylib.LoadTexture("tiles/PATileNormal.png");
                 tileHoverTex = Raylib.LoadTexture("tiles/PATileHighlighted.png");
                 texturesLoaded = true;
@@ -140,8 +140,8 @@ namespace MemoryGame
 
         private void LoadBackground()
         {
-            try 
-            { 
+            try
+            {
                 backgroundTex = Raylib.LoadTexture("bg/TileBackground.png");
                 backgroundLoaded = true;
             }
@@ -150,8 +150,8 @@ namespace MemoryGame
 
         private void LoadLoadingScreen()
         {
-            try 
-            { 
+            try
+            {
                 loadingScreenTex = Raylib.LoadTexture("screens/ScreenGameStart.png");
                 loadingScreenLoaded = true;
                 gameState = GameState.Loading;
@@ -304,14 +304,16 @@ namespace MemoryGame
             {
                 bool tileClicked = tileManager.HandleTileClick(
                     mousePos,
-                    () => {
+                    () =>
+                    {
                         if (audioLoaded) Raylib.PlaySound(sCorrect);
                         int basePoints = 100;
                         int bonus = 50; // Bonus if pair hasn't been unflipped twice
                         score += basePoints + bonus;
                         if (tileManager.CheckVictory()) gameState = GameState.Victory;
                     },
-                    () => {
+                    () =>
+                    {
                         health--;
                         if (audioLoaded)
                         {
@@ -363,7 +365,7 @@ namespace MemoryGame
             int fontSize = 24;
             float alpha = (float)Math.Sin(loadingTimer * 4) * 0.5f + 0.5f;
             Color textColor = new Color(255, 255, 255, (int)(255 * alpha));
-            Raylib.DrawText(pressMsg, screenW/2 - Raylib.MeasureText(pressMsg, fontSize)/2,
+            Raylib.DrawText(pressMsg, screenW / 2 - Raylib.MeasureText(pressMsg, fontSize) / 2,
                           screenH - 80, fontSize, textColor);
         }
 
@@ -441,59 +443,10 @@ namespace MemoryGame
             for (int i = 0; i < tiles.Count; i++)
             {
                 var t = tiles[i];
+                bool isHovered = (i == lastHoverIndex);
 
-                if (t.State == TileState.Closed && texturesLoaded)
-                {
-                    bool isHovered = (i == lastHoverIndex);
-                    var tex = isHovered ? tileHoverTex : tileNormalTex;
-                    Raylib.DrawTexturePro(tex,
-                        new Rectangle(0, 0, tex.Width, tex.Height),
-                        new Rectangle(t.X, t.Y, t.W, t.H),
-                        new Vector2(0, 0), 0f, Palette.White);
-                    Raylib.DrawRectangleLinesEx(t.Rect, 2, Palette.DarkGray);
-                }
-                else
-                {
-                    Color bg = t.State switch
-                    {
-                        TileState.Closed => Palette.DarkBlue,
-                        TileState.Revealed => Palette.SkyBlue,
-                        TileState.Matched => Palette.Lime,
-                        _ => Palette.Gray
-                    };
-
-                    Raylib.DrawRectangleRec(t.Rect, bg);
-                    Raylib.DrawRectangleLinesEx(t.Rect, 2, Palette.DarkGray);
-                }
-
-                if (t.State == TileState.Revealed || t.State == TileState.Matched)
-                {
-                    if (pairTexturesLoaded && t.PairId >= 0 && t.PairId < pairTextures.Length)
-                    {
-                        var ptex = pairTextures[t.PairId];
-                        float pad = Math.Min(t.W, t.H) * 0.12f;
-                        Raylib.DrawTexturePro(ptex,
-                            new Rectangle(0, 0, ptex.Width, ptex.Height),
-                            new Rectangle(t.X + pad, t.Y + pad, t.W - pad * 2, t.H - pad * 2),
-                            new Vector2(0, 0), 0f, Palette.White);
-                    }
-                    else
-                    {
-                        string txt = ((char)('A' + (t.PairId % 26))).ToString();
-                        int fontSize = 28;
-                        int textW = Raylib.MeasureText(txt, fontSize);
-                        Raylib.DrawText(txt,
-                            (int)(t.X + t.W / 2 - textW / 2),
-                            (int)(t.Y + t.H / 2 - fontSize / 2),
-                            fontSize, Palette.Black);
-                    }
-                }
-                else if (!texturesLoaded)
-                {
-                    int cx = (int)(t.X + t.W / 2);
-                    int cy = (int)(t.Y + t.H / 2);
-                    Raylib.DrawCircle(cx, cy, Math.Min(t.W, t.H) / 8, Palette.DarkGray);
-                }
+                // Use TextureHandler to draw the tile
+                TextureHandler.DrawTile(t, isHovered);
             }
         }
 

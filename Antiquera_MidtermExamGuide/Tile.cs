@@ -10,6 +10,7 @@ namespace MemoryGame
         public int PairId { get; set; }
         public TileState State { get; set; } = TileState.Closed;
         public int FlipCount { get; set; } = 0; // tracks how many times it was unflipped
+        public string CharacterName { get; set; } = "";
         public Raylib_cs.Rectangle Rect { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
