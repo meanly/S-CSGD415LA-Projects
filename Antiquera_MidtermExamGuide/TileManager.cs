@@ -1,35 +1,166 @@
-using Raylib_cs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Raylib_cs;
 
 namespace MemoryGame
 {
     public class TileManager
     {
-        public List<Tile> Tiles { get; private set; } = new List<Tile>();
-        public List<Tile> FlippedTiles { get; private set; } = new List<Tile>();
-        private string[] characterImages = { "Tile_Aren.png", "Tile_Cisco.png", "Tile_ENGage.png", "Tile_Euriepidies.png", "Tile_Jiyo.png", "Tile_Kuzuri.png", "Tile_Marky.png", "Tile_Meanly.png", "Tile_Moon^2.png", "Tile_N1by.png", "Tile_Nyte.png", "Tile_Proksy.png", "Tile_Sia.png", "Tile_Zakkiyan.png" };
-
-        public void NewGame()
+        private List<Tile> tiles = new();
+        private List<Tile> revealedThisTurn = new();
+        private Random rng = new();
+        private int lastHoverIndex = -1;
+        private float mismatchRevealTime = 0.8f;
+        private float mismatchTimer = 0f;
+        private int cols;
+        private int rows;
+        
+        public TileManager(int columns, int rows)
         {
-            Tiles.Clear(); FlippedTiles.Clear();
-            var tileValues = new List<int>();
-            for (int i = 0; i < 14; i++) { tileValues.Add(i); tileValues.Add(i); }
-            tileValues = tileValues.OrderBy(x => new System.Random().Next()).ToList();
-
-            for (int row = 0; row < 7; row++)
-                for (int col = 0; col < 4; col++)
-                    Tiles.Add(new Tile(400 + col * 120, 150 + row * 100, 100, 100, tileValues[row * 4 + col]));
+            this.cols = columns;
+            this.rows = rows;
         }
 
-        public void FlipTile(Tile tile) { if (!FlippedTiles.Contains(tile) && FlippedTiles.Count < 2) { tile.Flip(); FlippedTiles.Add(tile); } }
-        public void UnflipAllTiles() { foreach (var tile in FlippedTiles) tile.Unflip(); FlippedTiles.Clear(); }
-        public void HideAllTiles() { foreach (var tile in Tiles) tile.Unflip(); }
-        public void ShowAllTiles() { foreach (var tile in Tiles) tile.Flip(); }
-        public bool HasTwoFlipped() => FlippedTiles.Count == 2;
-        public bool CompareFlippedTiles() { if (FlippedTiles.Count != 2) return false; if (FlippedTiles[0].Value == FlippedTiles[1].Value) { FlippedTiles[0].Match(); FlippedTiles[1].Match(); FlippedTiles.Clear(); return true; } return false; }
-        public Tile? GetTileAtPosition(float x, float y) => Tiles.FirstOrDefault(t => t.IsPointInside(x, y) && !t.IsMatched);
-        public bool AllTilesMatched() => Tiles.All(t => t.IsMatched);
-        public string? GetCharacterImage(int tileValue) => tileValue >= 0 && tileValue < characterImages.Length ? characterImages[tileValue] : null;
+        public void CreateTiles(int screenW, int screenH)
+        {
+            tiles.Clear();
+            revealedThisTurn.Clear();
+            mismatchTimer = 0f;
+
+            // prepare pairs
+            int pairs = cols * rows / 2;
+            var ids = new List<int>();
+            for (int i = 0; i < pairs; i++)
+            {
+                ids.Add(i);
+                ids.Add(i);
+            }
+
+            // shuffle
+            ids = ids.OrderBy(x => rng.Next()).ToList();
+
+            // layout - make tiles square and center grid
+            float padding = 10;
+            float gridWAvail = screenW - 100;
+            float gridHAvail = screenH - 160;
+            float maxTileW = (gridWAvail - (cols + 1) * padding) / cols;
+            float maxTileH = (gridHAvail - (rows + 1) * padding) / rows;
+            float tileSize = Math.Min(maxTileW, maxTileH);
+            float gridW = cols * tileSize + (cols + 1) * padding;
+            float gridH = rows * tileSize + (rows + 1) * padding;
+            float startX = (screenW - gridW) / 2 + padding;
+            float startY = 120 + ((screenH - 160 - gridH) / 2) + padding;
+
+            int idx = 0;
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    var t = new Tile();
+                    t.PairId = ids[idx++];
+                    t.State = TileState.Closed;
+                    float x = startX + c * (tileSize + padding);
+                    float y = startY + r * (tileSize + padding);
+                    t.Rect = new Rectangle(x, y, tileSize, tileSize);
+                    t.X = x; t.Y = y; t.W = tileSize; t.H = tileSize;
+                    tiles.Add(t);
+                }
+            }
+        }
+
+        public void UpdateMismatchTimer(float dt)
+        {
+            if (mismatchTimer > 0f)
+            {
+                mismatchTimer -= dt;
+                if (mismatchTimer <= 0f)
+                {
+                    foreach (var t in revealedThisTurn)
+                    {
+                        if (t.State != TileState.Matched)
+                        {
+                            t.State = TileState.Closed;
+                            t.FlipCount++;
+                        }
+                    }
+                    revealedThisTurn.Clear();
+                }
+            }
+        }
+
+        public bool HandleTileClick(Vector2 mousePos, Action onMatch, Action onMismatch)
+        {
+            if (mismatchTimer > 0f) return false;
+
+            foreach (var t in tiles)
+            {
+                if (Raylib.CheckCollisionPointRec(mousePos, t.Rect))
+                {
+                    if (t.State == TileState.Closed)
+                    {
+                        t.State = TileState.Revealed;
+                        revealedThisTurn.Add(t);
+
+                        if (revealedThisTurn.Count == 2)
+                        {
+                            var a = revealedThisTurn[0];
+                            var b = revealedThisTurn[1];
+
+                            if (a.PairId == b.PairId)
+                            {
+                                a.State = TileState.Matched;
+                                b.State = TileState.Matched;
+                                onMatch();
+                                revealedThisTurn.Clear();
+                            }
+                            else
+                            {
+                                mismatchTimer = mismatchRevealTime;
+                                onMismatch();
+                            }
+                        }
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        public int UpdateHover(Vector2 mousePos)
+        {
+            int hoverIndex = -1;
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                if (Raylib.CheckCollisionPointRec(mousePos, tiles[i].Rect))
+                {
+                    hoverIndex = i;
+                    break;
+                }
+            }
+            
+            int previousHoverIndex = lastHoverIndex;
+            lastHoverIndex = hoverIndex;
+            return (hoverIndex != previousHoverIndex && hoverIndex >= 0 && 
+                   tiles[hoverIndex].State == TileState.Closed && mismatchTimer <= 0f) ? hoverIndex : -1;
+        }
+
+        public void ShowAllTiles() => tiles.ForEach(t => t.State = TileState.Revealed);
+        public void HideAllTiles() => tiles.ForEach(t => t.State = TileState.Closed);
+        public void ResetRevealedTiles()
+        {
+            foreach (var t in tiles.Where(x => x.State == TileState.Revealed))
+            {
+                t.State = TileState.Closed;
+                t.FlipCount++;
+            }
+            revealedThisTurn.Clear();
+        }
+
+        public bool CheckVictory() => tiles.All(x => x.State == TileState.Matched);
+        public List<Tile> GetTiles() => tiles;
+        public int GetLastHoverIndex() => lastHoverIndex;
     }
 }
