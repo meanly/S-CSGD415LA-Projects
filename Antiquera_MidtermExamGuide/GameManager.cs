@@ -109,11 +109,11 @@ namespace MemoryGame
         {
             try
             {
-                string iconPath = Path.Combine(Directory.GetCurrentDirectory(), "icons");
+                string iconPath = Path.Combine(Directory.GetCurrentDirectory(), "img");
                 if (Directory.Exists(iconPath))
                 {
-                    iconHealthTex = Raylib.LoadTexture(@"icons\IconHealth.png");
-                    iconTimerTex = Raylib.LoadTexture(@"icons\IconTimer.png");
+                    iconHealthTex = Raylib.LoadTexture(@"img\IconHealth.png");
+                    iconTimerTex = Raylib.LoadTexture(@"img\IconTimer.png");
                     iconsLoaded = (iconHealthTex.Width > 0 && iconTimerTex.Width > 0);
                 }
                 else iconsLoaded = false;
