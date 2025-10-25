@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "nuKyxQ5R8js=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Antiquera_Midterm\\MemoryGame.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.1\\raylib-cs.7.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
