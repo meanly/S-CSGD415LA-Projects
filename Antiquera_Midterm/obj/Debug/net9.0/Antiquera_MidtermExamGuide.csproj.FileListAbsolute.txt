@@ -1,0 +1,6 @@
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.csproj.AssemblyReference.cache
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.AssemblyInfoInputs.cache
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.AssemblyInfo.cs
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.csproj.CoreCompileInputs.cache
+C:\Users\meanl\Documents\GitHub Repositories\S-CSGD415LA-Projects\Antiquera_MidtermExamGuide\obj\Debug\net9.0\Antiquera_MidtermExamGuide.sourcelink.json

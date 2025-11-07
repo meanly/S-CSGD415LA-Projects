@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "KWQUI/Hy/u4=",
+  "success": true,
+  "projectFilePath": "/Users/student/Desktop/Antiquera_Midterm/MemoryGame.csproj",
+  "expectedPackageFiles": [
+    "/Users/student/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
