@@ -5,23 +5,57 @@ namespace Antiquera_LabActivity1_Finals;
 
 public class Animation
 {
-    private Texture2D[] frames;
+    private Texture2D spriteSheet;
+    private Rectangle[] frameRects;
+    private int frameCount;
     private float frameTime;
     private float currentTime;
     private int currentFrame;
     private bool looping;
     private bool isPlaying;
+    private int frameWidth;
+    private int frameHeight;
 
-    public Animation(string[] framePaths, float frameTime, bool looping = true)
+    // Constructor for sprite sheet (single image with multiple frames)
+    public Animation(string spriteSheetPath, int numFrames, float frameTime, bool looping = true)
     {
-        frames = new Texture2D[framePaths.Length];
-        for (int i = 0; i < framePaths.Length; i++)
+        if (System.IO.File.Exists(spriteSheetPath))
         {
-            if (System.IO.File.Exists(framePaths[i]))
+            spriteSheet = Raylib.LoadTexture(spriteSheetPath);
+            frameCount = numFrames;
+            
+            // Calculate frame dimensions (assuming frames are arranged horizontally)
+            frameWidth = spriteSheet.Width / numFrames;
+            frameHeight = spriteSheet.Height;
+            
+            // Create rectangles for each frame
+            frameRects = new Rectangle[numFrames];
+            for (int i = 0; i < numFrames; i++)
             {
-                frames[i] = Raylib.LoadTexture(framePaths[i]);
+                frameRects[i] = new Rectangle(i * frameWidth, 0, frameWidth, frameHeight);
             }
         }
+        else
+        {
+            spriteSheet = new Texture2D();
+            frameRects = new Rectangle[0];
+            frameCount = 0;
+        }
+        
+        this.frameTime = frameTime;
+        this.looping = looping;
+        this.currentTime = 0;
+        this.currentFrame = 0;
+        this.isPlaying = true;
+    }
+
+    // Legacy constructor for multiple separate frame files (kept for compatibility)
+    public Animation(string[] framePaths, float frameTime, bool looping = true)
+    {
+        // This constructor is kept but not recommended - use sprite sheet constructor instead
+        spriteSheet = new Texture2D();
+        frameRects = new Rectangle[0];
+        frameCount = 0;
         this.frameTime = frameTime;
         this.looping = looping;
         this.currentTime = 0;
@@ -38,7 +72,7 @@ public class Animation
         {
             currentTime = 0;
             currentFrame++;
-            if (currentFrame >= frames.Length)
+            if (currentFrame >= frameCount)
             {
                 if (looping)
                 {
@@ -46,17 +80,35 @@ public class Animation
                 }
                 else
                 {
-                    currentFrame = frames.Length - 1;
+                    currentFrame = frameCount - 1;
                     isPlaying = false;
                 }
             }
         }
     }
 
-    public Texture2D GetCurrentFrame()
+    public Texture2D GetSpriteSheet()
     {
-        if (frames.Length == 0) return new Texture2D();
-        return frames[currentFrame];
+        return spriteSheet;
+    }
+
+    public Rectangle GetCurrentFrameRect()
+    {
+        if (frameRects.Length == 0 || currentFrame >= frameRects.Length)
+        {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        return frameRects[currentFrame];
+    }
+
+    public int GetFrameWidth()
+    {
+        return frameWidth;
+    }
+
+    public int GetFrameHeight()
+    {
+        return frameHeight;
     }
 
     public void Reset()
@@ -83,12 +135,9 @@ public class Animation
 
     public void Unload()
     {
-        foreach (var frame in frames)
+        if (spriteSheet.Id != 0)
         {
-            if (frame.Id != 0)
-            {
-                Raylib.UnloadTexture(frame);
-            }
+            Raylib.UnloadTexture(spriteSheet);
         }
     }
 }

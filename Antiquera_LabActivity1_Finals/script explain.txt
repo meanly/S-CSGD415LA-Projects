@@ -1,0 +1,6 @@
+Program.cs — initialize the window and main loop
+Animation.cs — sprite animator (splits images into frames then loop)
+Player.cs — player movement
+Game.cs — renders the tile map, updates player/enemies/projectiles, handles collisions, and ui.
+Enemy.cs — patrols or chases the player, has health, and uses animations
+Projectile.cs — manages rrows/projectiles

@@ -61,7 +61,7 @@ public class Game
     private void LoadTileTextures()
     {
         string tilesetPath = "Tiny Adventure Pack Plus/Tilesets";
-        
+
         // Load Grass.png texture
         if (System.IO.File.Exists($"{tilesetPath}/Environment Items/Grass.png"))
         {
@@ -77,7 +77,7 @@ public class Game
     private void GenerateTileMap()
     {
         tileMap = new int[mapHeight, mapWidth];
-        
+
         // Fill entire map with grass (0 = grass)
         for (int y = 0; y < mapHeight; y++)
         {

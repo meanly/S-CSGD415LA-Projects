@@ -55,55 +55,55 @@ public class Player
         meleeAttackAnimations = new Dictionary<Direction, Animation>();
         rangedAttackAnimations = new Dictionary<Direction, Animation>();
 
-        // Load idle animations
+        // Load idle animations (6 frames per sprite sheet)
         idleAnimations[Direction.Down] = new Animation(
-            new[] { $"{assetPath}/Idle/Char_idle_down.png" }, 0.2f);
+            $"{assetPath}/Idle/Char_idle_down.png", 6, 0.2f);
         idleAnimations[Direction.Left] = new Animation(
-            new[] { $"{assetPath}/Idle/Char_idle_left.png" }, 0.2f);
+            $"{assetPath}/Idle/Char_idle_left.png", 6, 0.2f);
         idleAnimations[Direction.Right] = new Animation(
-            new[] { $"{assetPath}/Idle/Char_idle_right.png" }, 0.2f);
+            $"{assetPath}/Idle/Char_idle_right.png", 6, 0.2f);
         idleAnimations[Direction.Up] = new Animation(
-            new[] { $"{assetPath}/Idle/Char_idle_up.png" }, 0.2f);
+            $"{assetPath}/Idle/Char_idle_up.png", 6, 0.2f);
 
-        // Load walk animations
+        // Load walk animations (6 frames per sprite sheet)
         walkAnimations[Direction.Down] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_down.png" }, 0.15f);
+            $"{assetPath}/Walk/Char_walk_down.png", 6, 0.15f);
         walkAnimations[Direction.Left] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_left.png" }, 0.15f);
+            $"{assetPath}/Walk/Char_walk_left.png", 6, 0.15f);
         walkAnimations[Direction.Right] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_right.png" }, 0.15f);
+            $"{assetPath}/Walk/Char_walk_right.png", 6, 0.15f);
         walkAnimations[Direction.Up] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_up.png" }, 0.15f);
+            $"{assetPath}/Walk/Char_walk_up.png", 6, 0.15f);
 
         // Use walk animations for run but with faster frame time
         runAnimations[Direction.Down] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_down.png" }, 0.08f);
+            $"{assetPath}/Walk/Char_walk_down.png", 6, 0.08f);
         runAnimations[Direction.Left] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_left.png" }, 0.08f);
+            $"{assetPath}/Walk/Char_walk_left.png", 6, 0.08f);
         runAnimations[Direction.Right] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_right.png" }, 0.08f);
+            $"{assetPath}/Walk/Char_walk_right.png", 6, 0.08f);
         runAnimations[Direction.Up] = new Animation(
-            new[] { $"{assetPath}/Walk/Char_walk_up.png" }, 0.08f);
+            $"{assetPath}/Walk/Char_walk_up.png", 6, 0.08f);
 
-        // Load melee attack animations
+        // Load melee attack animations (6 frames per sprite sheet)
         meleeAttackAnimations[Direction.Down] = new Animation(
-            new[] { $"{assetPath}/Attack/Sword/Char_atk_down.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Sword/Char_atk_down.png", 6, 0.1f, false);
         meleeAttackAnimations[Direction.Left] = new Animation(
-            new[] { $"{assetPath}/Attack/Sword/Char_atk_left.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Sword/Char_atk_left.png", 6, 0.1f, false);
         meleeAttackAnimations[Direction.Right] = new Animation(
-            new[] { $"{assetPath}/Attack/Sword/Char_atk_right.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Sword/Char_atk_right.png", 6, 0.1f, false);
         meleeAttackAnimations[Direction.Up] = new Animation(
-            new[] { $"{assetPath}/Attack/Sword/Char_atk_up.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Sword/Char_atk_up.png", 6, 0.1f, false);
 
-        // Load ranged attack animations
+        // Load ranged attack animations (6 frames per sprite sheet)
         rangedAttackAnimations[Direction.Down] = new Animation(
-            new[] { $"{assetPath}/Attack/Bow/Char_bow_down.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Bow/Char_bow_down.png", 6, 0.1f, false);
         rangedAttackAnimations[Direction.Left] = new Animation(
-            new[] { $"{assetPath}/Attack/Bow/Char_bow_left.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Bow/Char_bow_left.png", 6, 0.1f, false);
         rangedAttackAnimations[Direction.Right] = new Animation(
-            new[] { $"{assetPath}/Attack/Bow/Char_bow_right.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Bow/Char_bow_right.png", 6, 0.1f, false);
         rangedAttackAnimations[Direction.Up] = new Animation(
-            new[] { $"{assetPath}/Attack/Bow/Char_bow_up.png" }, 0.1f, false);
+            $"{assetPath}/Attack/Bow/Char_bow_up.png", 6, 0.1f, false);
     }
 
     public void Update(float deltaTime)
@@ -233,42 +233,46 @@ public class Player
 
     public void Draw()
     {
-        Texture2D currentTexture;
+        Animation currentAnimation;
 
         switch (currentState)
         {
             case PlayerState.Idle:
-                currentTexture = idleAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = idleAnimations[facingDirection];
                 break;
             case PlayerState.Walking:
-                currentTexture = walkAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = walkAnimations[facingDirection];
                 break;
             case PlayerState.Running:
-                currentTexture = runAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = runAnimations[facingDirection];
                 break;
             case PlayerState.AttackingMelee:
-                currentTexture = meleeAttackAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = meleeAttackAnimations[facingDirection];
                 break;
             case PlayerState.AttackingRanged:
-                currentTexture = rangedAttackAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = rangedAttackAnimations[facingDirection];
                 break;
             default:
-                currentTexture = idleAnimations[facingDirection].GetCurrentFrame();
+                currentAnimation = idleAnimations[facingDirection];
                 break;
         }
 
-        if (currentTexture.Id != 0)
+        Texture2D spriteSheet = currentAnimation.GetSpriteSheet();
+        if (spriteSheet.Id != 0)
         {
             // Scale up the player sprite (3x size for better visibility)
             float scale = 3.0f;
-            Rectangle sourceRect = new Rectangle(0, 0, currentTexture.Width, currentTexture.Height);
+            Rectangle sourceRect = currentAnimation.GetCurrentFrameRect();
+            int frameWidth = currentAnimation.GetFrameWidth();
+            int frameHeight = currentAnimation.GetFrameHeight();
+
             Rectangle destRect = new Rectangle(
                 position.X,
                 position.Y,
-                currentTexture.Width * scale,
-                currentTexture.Height * scale
+                frameWidth * scale,
+                frameHeight * scale
             );
-            Raylib.DrawTexturePro(currentTexture, sourceRect, destRect, Vector2.Zero, 0, new Color(255, 255, 255, 255));
+            Raylib.DrawTexturePro(spriteSheet, sourceRect, destRect, Vector2.Zero, 0, new Color(255, 255, 255, 255));
         }
     }
 

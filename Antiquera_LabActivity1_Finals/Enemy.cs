@@ -14,7 +14,8 @@ public class Enemy
     private Vector2 patrolTarget;
     private float patrolTimer;
     private float patrolCooldown = 2.0f;
-
+    private Vector2 lastPlayerPosition;
+    
     private Animation idleAnimation = null!;
     private Animation walkAnimation = null!;
     private string assetPath = "Tiny Adventure Pack Plus/Enemies/Goblin";
@@ -35,18 +36,19 @@ public class Enemy
 
     private void LoadAnimations()
     {
-        // Load goblin animations (using idle and walk)
+        // Load goblin animations (using idle and walk - 6 frames per sprite sheet)
         idleAnimation = new Animation(
-            new[] { $"{assetPath}/Goblin_4sides.png" }, 0.2f);
-
+            $"{assetPath}/Goblin_4sides.png", 6, 0.2f);
+        
         walkAnimation = new Animation(
-            new[] { $"{assetPath}/Walk/Goblin_walk_down.png" }, 0.15f);
+            $"{assetPath}/Walk/Goblin_walk_down.png", 6, 0.15f);
     }
 
     public void Update(float deltaTime, Vector2 playerPosition)
     {
         if (!IsAlive) return;
 
+        lastPlayerPosition = playerPosition;
         patrolTimer += deltaTime;
 
         // Simple AI: patrol or chase player
@@ -109,25 +111,30 @@ public class Enemy
     {
         if (!IsAlive) return;
 
-        Texture2D currentTexture = walkAnimation.GetCurrentFrame();
-
-        if (currentTexture.Id == 0)
+        // Determine which animation to use based on state
+        Animation currentAnim = walkAnimation;
+        float distanceToPlayer = Vector2.Distance(position, lastPlayerPosition);
+        if (distanceToPlayer >= 150.0f && !isPatrolling)
         {
-            currentTexture = idleAnimation.GetCurrentFrame();
+            currentAnim = idleAnimation;
         }
-
-        if (currentTexture.Id != 0)
+        
+        Texture2D spriteSheet = currentAnim.GetSpriteSheet();
+        if (spriteSheet.Id != 0)
         {
             // Scale up the enemy sprite (3x size to match player)
             float scale = 3.0f;
-            Rectangle sourceRect = new Rectangle(0, 0, currentTexture.Width, currentTexture.Height);
+            Rectangle sourceRect = currentAnim.GetCurrentFrameRect();
+            int frameWidth = currentAnim.GetFrameWidth();
+            int frameHeight = currentAnim.GetFrameHeight();
+            
             Rectangle destRect = new Rectangle(
                 position.X, 
                 position.Y, 
-                currentTexture.Width * scale, 
-                currentTexture.Height * scale
+                frameWidth * scale, 
+                frameHeight * scale
             );
-            Raylib.DrawTexturePro(currentTexture, sourceRect, destRect, Vector2.Zero, 0, new Color(255, 255, 255, 255));
+            Raylib.DrawTexturePro(spriteSheet, sourceRect, destRect, Vector2.Zero, 0, new Color(255, 255, 255, 255));
         }
         else
         {
