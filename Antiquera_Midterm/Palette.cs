@@ -16,4 +16,8 @@ namespace MemoryGame
         public static readonly Color Lime = new Color(0, 228, 48, 255);
         public static readonly Color Gold = new Color(255, 203, 0, 255);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e529e2be160b9e2c672146ba7a232c99408d5735

@@ -3,7 +3,16 @@ using Raylib_cs;
 
 namespace MemoryGame
 {
+<<<<<<< HEAD
     public enum TileState { Closed, Revealed, Matched }
+=======
+    public enum TileState
+    {
+        Closed,
+        Revealed,
+        Matched,
+    }
+>>>>>>> e529e2be160b9e2c672146ba7a232c99408d5735
 
     public class Tile
     {
