@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "f/cTCj7Y3kA=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\meanl\\Documents\\GitHub Repositories\\S-CSGD415LA-Projects\\Finals_SpaceFlap\\Finals_SpaceFlap.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\meanl\\.nuget\\packages\\raylib-cs\\7.0.2\\raylib-cs.7.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
