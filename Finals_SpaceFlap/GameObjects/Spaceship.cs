@@ -6,9 +6,9 @@ namespace Finals_SpaceFlap.GameObjects;
 
 public class Spaceship : GameObject
 {
-    private const float JumpVelocity = -400f;
+    private const float JumpVelocity = -250f; // Lower jump for easier navigation
     private const float Gravity = 800f;
-    private const float Scale = 0.3f; // Scale down the image
+    private const float Scale = 0.2f; // Smaller scale like flappy bird
     private Texture2D? texture;
     private float facingDirection = 1f; // 1 = right, -1 = left
 

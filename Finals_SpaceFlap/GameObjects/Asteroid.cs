@@ -6,7 +6,6 @@ namespace Finals_SpaceFlap.GameObjects;
 
 public class Asteroid : GameObject
 {
-    private const float Speed = 200f;
     private const float Scale = 0.3f; // Scale down the image
     private Texture2D? texture;
     private bool hasBeenPassed;
@@ -14,16 +13,16 @@ public class Asteroid : GameObject
     public bool HasBeenPassed => hasBeenPassed;
     public float RightEdge => Position.X + Width;
 
-    public Asteroid(float x, float y, float width, float height)
+    public Asteroid(float x, float y, float width, float height, float speed)
         : base(x, y, width, height)
     {
-        Velocity = new Vector2(-Speed, 0);
+        Velocity = new Vector2(-speed, 0);
         LoadTexture(width, height);
     }
 
     private void LoadTexture(float providedWidth, float providedHeight)
     {
-        string texturePath = Path.Combine("Assets", "asteroid.gif");
+        string texturePath = Path.Combine("Assets", "asteroid.png");
         if (File.Exists(texturePath))
         {
             Image image = Raylib.LoadImage(texturePath);

@@ -20,6 +20,11 @@ public class ParallaxBackground
         Reset();
     }
 
+    public void SetScrollSpeed(float speed)
+    {
+        scrollSpeed = speed;
+    }
+
     private void LoadTexture()
     {
         string bgPath = Path.Combine("Assets", "bg 2.png");

@@ -8,6 +8,7 @@ public class GameManager
     private Spaceship? spaceship;
     private AsteroidManager? asteroidManager;
     private ParallaxBackground? background;
+    private DifficultyManager? difficultyManager;
     private int score;
     private bool isGameOver;
     private bool isGameStarted;
@@ -18,11 +19,24 @@ public class GameManager
     {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        difficultyManager = new DifficultyManager();
         ResetGame();
     }
 
     public void Update(float deltaTime)
     {
+        // Update difficulty based on score
+        if (difficultyManager != null)
+        {
+            difficultyManager.UpdateDifficulty(score);
+
+            // Update background scroll speed
+            if (background != null)
+            {
+                background.SetScrollSpeed(difficultyManager.BackgroundScrollSpeed);
+            }
+        }
+
         // Update background (always scrolling)
         background?.Update(deltaTime);
 
@@ -68,8 +82,9 @@ public class GameManager
                 isGameOver = true;
             }
 
-            // Update score
-            score += asteroidManager.CheckScore(spaceship.Position.X);
+            // Update score - use spaceship's right edge
+            float spaceshipRightEdge = spaceship.Position.X + spaceship.GetBounds().Width;
+            score += asteroidManager.CheckScore(spaceshipRightEdge);
         }
     }
 
@@ -116,7 +131,12 @@ public class GameManager
         isGameOver = false;
         isGameStarted = false;
         spaceship = new Spaceship(100, screenHeight / 2);
-        asteroidManager = new AsteroidManager(screenWidth, screenHeight);
-        background = new ParallaxBackground(screenWidth, screenHeight);
+
+        if (difficultyManager != null)
+        {
+            difficultyManager.UpdateDifficulty(0);
+            asteroidManager = new AsteroidManager(screenWidth, screenHeight, difficultyManager);
+            background = new ParallaxBackground(screenWidth, screenHeight, difficultyManager.BackgroundScrollSpeed);
+        }
     }
 }
