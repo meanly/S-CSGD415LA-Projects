@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Finals_SpaceFlap")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3ca0e2aedca874d96b5d2a66dca2522c8ba0123")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a1703039c929ab9407a53dd15b61a36eb791af1")]
 [assembly: System.Reflection.AssemblyProductAttribute("Finals_SpaceFlap")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Finals_SpaceFlap")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -27,8 +27,7 @@ public class Spaceship : GameObject
             Image image = Raylib.LoadImage(texturePath);
             texture = Raylib.LoadTextureFromImage(image);
 
-            // Update collision bounds based on actual scaled texture size
-            // Store original dimensions before unloading
+            // collision bounds of an image texture
             int imgWidth = image.Width;
             int imgHeight = image.Height;
             Width = imgWidth * Scale;

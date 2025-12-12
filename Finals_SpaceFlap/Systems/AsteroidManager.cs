@@ -137,11 +137,10 @@ public class AsteroidManager
         float minGap = difficultyManager.MinGap;
         float maxGap = difficultyManager.MaxGap;
 
-        // Random gap height (like Flappy Bird)
+        // Random gap height
         float gapHeight = random.NextSingle() * (maxGap - minGap) + minGap;
 
-        // Random gap Y position (center of gap) - like Flappy Bird
-        // Gap should be within screen bounds with some margin
+        // Random gap Y position (center of gap)
         float minGapY = gapHeight / 2 + 50; // Minimum gap center position
         float maxGapY = screenHeight - gapHeight / 2 - 50; // Maximum gap center position
         float gapY = random.NextSingle() * (maxGapY - minGapY) + minGapY;
@@ -211,11 +210,10 @@ public class AsteroidManager
             if (!pipe.HasBeenPassed)
             {
                 float pipeRightEdge = pipe.GetRightEdge();
-                // Score when spaceship's right edge has passed the pipe's right edge
                 if (spaceshipRightEdge > pipeRightEdge)
                 {
                     pipe.HasBeenPassed = true;
-                    newScore++; // 1 point per pipe passed, like Flappy Bird
+                    newScore++; // 1 point per pipe passed
                 }
             }
         }
